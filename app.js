@@ -1,26 +1,20 @@
 import express from "express"
+import cookieParser from "cookie-parser"
+
 const app = express()
 
 // console.info(app)
-
 app.listen(5000, ()=>{
     console.info(`App is running in localhost:5000`)
 })
+// to read cookies
+app.use(cookieParser())
+// to read json from body
+app.use(express.json())
 // get
 app.get('/', (req, res) =>{
     res.format({
-        // 'text/plain': function () {
-
-        //     res.send('<i>Response received from Homepage</i>.')
-        // }
-        /*
-            'application/json: function () {
-                res.send({
-                    message: "yo!"
-                })
-            }
-        */
-        JSON : function () {
+        JSON : () => {
 
             res.send({
                 message: "yo!"
@@ -30,7 +24,18 @@ app.get('/', (req, res) =>{
 })
 
 app.get('/contact', (req, res) =>{
-    res.send('<p>Response received from Contact page</p>.')
+    // res.send('<p>Response received from Contact page</p>.')
+    res.status(200).format({
+        json: () => {
+            res.send({
+                ip: req.ip,
+                query: req.query,
+                body: req.body,
+                path: req.path,
+                params: req.params
+            })
+        }
+    })
 })
 
 app.get('/blogs', (req, res) =>{
@@ -38,21 +43,34 @@ app.get('/blogs', (req, res) =>{
 })
 
 app.get('/projects', (req, res) =>{
-    res.send('<p>Response received from Projects page</p>.')
+    res.status(200).json({
+        cookies: req.cookies
+    })
+    // res.send('<p>Response received from Projects page</p>.')
 })
 
 app.get('/about', (req, res) =>{
-    res.send('<p>Response received from About page</p>.')
+    res.cookie("token", "askdjbajfdlajsda")
+    res.send('cookie sent')
 })
 // post
-app.post('/contact', (req, res) =>{
-    res.send('<p>Contact created for or from Contact page</p>.')
-})
+app.post('/contact/:id', (req, res) =>{
+    res.status(200).format({
+        json: () => {
+            res.send({
+                ip: req.ip,
+                query: req.query,
+                body: req.body,
+                path: req.path,
+                params: req.params
+            })
+        }
+    })})
 
-app.post('/blogs', (req, res) =>{
+app.post('/blogs/:id', (req, res) =>{
     res.send('<p>Post created for or from Blogs page</p>.')
 })
-app.post('/projects', (req, res) =>{
+app.post('/projects/:id', (req, res) =>{
     res.send('<p>Post created for or from Projects page</p>.')
 })
 // put
