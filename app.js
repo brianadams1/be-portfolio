@@ -50,8 +50,7 @@ app.get('/projects', (req, res) =>{
 })
 
 app.get('/about', (req, res) =>{
-    res.cookie("token", "askdjbajfdlajsda")
-    res.send('cookie sent')
+    
 })
 // post
 app.post('/contact/:id', (req, res) =>{
@@ -72,6 +71,15 @@ app.post('/blogs/:id', (req, res) =>{
 })
 app.post('/projects/:id', (req, res) =>{
     res.send('<p>Post created for or from Projects page</p>.')
+})
+app.post('/login',(req, res)=>{
+    res.cookie("token", "askdjbajfdlajsda")
+    res.cookie("username", "troll1234")
+    res.cookie("location", "Jakarta")
+
+    res.status(200).json({
+        message: 'Logged in'
+    })
 })
 // put
 app.put('/contacts', (req, res) =>{
@@ -94,6 +102,16 @@ app.patch('/projects', (req, res) =>{
     res.send('<p>Patch from Projects page</p>.')
 })
 // delete
+app.delete('/logout',(req, res) =>{
+    res.clearCookie('token')
+    res.clearCookie('username')
+    res.clearCookie('location')
+
+    res.status(200).json({
+        message: 'Cookies cleared'
+    })
+})
+
 app.delete('/contacts', (req, res) =>{
     res.send('<p>Delete from Contacts page</p>.')
 })
