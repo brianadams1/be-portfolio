@@ -27,75 +27,160 @@ app.use((req, res, next) => {
   next();
 });
 
-// GET (TAKE)
-// GET METHOD FOR HOME
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ PAGE_PATHING START ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+const homeMessage = { message: "OK from Home page", status: 200 };
+const educationsMessage = { message: "OK from Educations Page", status: 200 };
+const blogsMessage = { message: "OK from Blogs Page", status: 200 };
+const profileMessage = { message: "OK from Profile Page", status: 200 };
+const projectsMessage = { message: "OK from Projects Page", status: 200 };
+const skillsMessage = { message: "OK from Skills Page", status: 200 };
+
+// ------------ HOME --------------
+
+// GET METHOD HOME
 app.get("/", (req, res) => {
-  res.format({
-    JSON: () => {
-      res.send({
-        message: "yo!"
-      });
-    },
-  });
+  res.status(200).json(homeMessage);
 });
 
-// GET METHOD FOR CONTACT
-app.get("/contact", (req, res) => {
-  res.status(200).format({
-    json: () => {
-      res.send({
-        ip: req.ip,
-        query: req.query,
-        body: req.body,
-        path: req.path,
-        params: req.params,
-      });
-    },
-  });
+// -------------- EDUCATIONS ----------------
+
+// GET METHOD EDUCATIONS
+app.get("/educations/:id", (req, res) => {
+  res.status(200).json(educationsMessage);
 });
 
-// GET METHOD FOR BLOGS
-app.get("/blogs", (req, res) => {
-  res.send("<p>Response received from Blogs page</p>.");
+// POST METHOD EDUCATIONS
+app.post("/educations/:id", (req, res) => {
+  res.status(200).json(educationsMessage);
 });
 
-// GET METHOD FOR PROJECTS
-app.get("/projects", (req, res) => {
-  res.status(200).json({
-    cookies: req.cookies,
-  });
+// PUT METHOD EDUCATIONS
+app.put("/educations/:id", (req, res) => {
+  res.status(200).json(educationsMessage);
 });
 
-// GET METHOD FOR ABOUT
-app.get("/about", (req, res) => {});
-
-// POST (SAVE)
-// POST METHOD FOR CONTACT
-app.post("/contact/:id", (req, res) => {
-  res.status(200).format({
-    json: () => {
-      res.send({
-        ip: req.ip,
-        query: req.query,
-        body: req.body,
-        path: req.path,
-        params: req.params,
-      });
-    },
-  });
+// PATCH METHOD EDUCATIONS
+app.patch("/educations/:id", (req, res) => {
+  res.status(200).json(educationsMessage);
 });
 
-// POST METHOD FOR BLOGS
+// DELETE METHOD EDUCATIONS
+app.delete("/educations/:id", (req, res) => {
+  res.status(200).json(educationsMessage);
+});
+
+// --------------- BLOGS -------------------
+
+// GET METHOD BLOGS
+app.get("/blogs/id", (req, res) => {
+  res.status(200).json(blogsMessage);
+});
+
+// POST METHOD BLOGS
 app.post("/blogs/:id", (req, res) => {
-  res.send("<p>Post created for or from Blogs page</p>.");
+  res.status(200).json(blogsMessage);
 });
 
-// POST METHOD FOR PROJECTS
+// PUT METHOD BLOGS
+app.put("/blogs/:id", (req, res) => {
+  res.status(200).json(blogsMessage);
+});
+
+// PATCH METHOD BLOGS
+app.patch("/blogs/:id", (req, res) => {
+  res.status(200).json(blogsMessage);
+});
+
+// DELETE METHOD BLOGS
+app.delete("/blogs/:id", (req, res) => {
+  res.status(200).json(blogsMessage);
+});
+
+// ---------- PROJECTS -----------
+
+// GET METHOD PROJECTS
+app.get("/projects/:id", (req, res) => {
+  res.status(200).json(projectsMessage);
+});
+
+// POST METHOD  PROJECTS
 app.post("/projects/:id", (req, res) => {
-  res.send("<p>Post created for or from Projects page</p>.");
+  res.status(200).json(projectsMessage);
 });
 
-// POST METHOD FOR LOGIN
+// PUT METHOD PROJECTS
+app.put("/projects/:id", (req, res) => {
+  res.status(200).json(projectsMessage);
+});
+
+// PATCH METHOD PROJECTS
+app.patch("/projects/:id", (req, res) => {
+  res.status(200).json(projectsMessage);
+});
+
+// DELETE METHOD PROJECTS
+app.delete("/projects/:id", (req, res) => {
+  res.status(200).json(projectsMessage);
+});
+
+// ---------- PROFILE -----------
+
+// GET METHOD PROFILE
+app.get("/profile/:id", (req, res) => {
+  res.status(200).json(profileMessage);
+});
+
+// POST METHOD  PROFILE
+app.post("/profile/:id", (req, res) => {
+  res.status(200).json(profileMessage);
+});
+
+// PUT METHOD PROFILE
+app.put("/profile/:id", (req, res) => {
+  res.status(200).json(profileMessage);
+});
+
+// PATCH METHOD PROFILE
+app.patch("/profile/:id", (req, res) => {
+  res.status(200).json(profileMessage);
+});
+
+// DELETE METHOD PROFILE
+app.delete("/profile/:id", (req, res) => {
+  res.status(200).json(profileMessage);
+});
+
+// ---------- SKILLS ----------
+
+// GET METHOD SKILLS
+app.get("/skills", (req, res) => {
+  res.status(200).json(skillsMessage);
+});
+
+// POST METHOD SKILLS
+app.post("/skills", (req, res) => {
+  res.status(200).json(skillsMessage);
+});
+
+// PUT METHOD SKILLS
+app.put("/skills", (req, res) => {
+  res.status(200).json(skillsMessage);
+});
+
+// PATCH METHOD SKILLS
+app.patch("/skills", (req, res) => {
+  res.status(200).json(skillsMessage);
+});
+
+// DELETE METHOD SKILLS
+app.delete("/skills", (req, res) => {
+  res.status(200).json(skillsMessage);
+});
+
+// ---------- LOGIN -----------
+
+// POST METHOD  LOGIN
 app.post("/login", (req, res) => {
   res.cookie("token", "askdjbajfdlajsda");
   res.cookie("username", "troll1234");
@@ -106,40 +191,9 @@ app.post("/login", (req, res) => {
   });
 });
 
-// PUT (EDIT)
-// PUT METHOD FOR CONTACT
-app.put("/contacts", (req, res) => {
-  res.send("<p>Put from Contacts page</p>.");
-});
+// ----------- LOGOUT ----------
 
-// PUT METHOD FOR BLOGS
-app.put("/blogs", (req, res) => {
-  res.send("<p>Put from Blogs page</p>.");
-});
-
-// PUT METHOD FOR PROJECTS
-app.put("/projects", (req, res) => {
-  res.send("<p>Put from Projects page</p>.");
-});
-
-// PATCH
-// PATCH METHOD FOR CONTACTS
-app.patch("/contacts", (req, res) => {
-  res.send("<p>Patch from Contacts page</p>.");
-});
-
-// PATCH METHOD FOR BLOGS
-app.patch("/blogs", (req, res) => {
-  res.send("<p>Patch from Blogs page</p>.");
-});
-
-// PATCH METHOD FOR PROJECTS
-app.patch("/projects", (req, res) => {
-  res.send("<p>Patch from Projects page</p>.");
-});
-
-// DELETE
-// DELETE METHOD FOR LOGOUT
+// DELETE METHOD LOGOUT
 app.delete("/logout", (req, res) => {
   res.clearCookie("token");
   res.clearCookie("username");
@@ -150,27 +204,13 @@ app.delete("/logout", (req, res) => {
   });
 });
 
-// DELETE METHOD FOR CONTACTS
-app.delete("/contacts", (req, res) => {
-  res.send("<p>Delete from Contacts page</p>.");
-});
-
-// DELETE METHOD FOR BLOGS
-app.delete("/blogs", (req, res) => {
-  res.send("<p>Delete from Blogs page</p>.");
-});
-
-// DELETE METHOD FOR PROJECTS
-app.delete("/projects", (req, res) => {
-  res.send("<p>Delete from Projects page</p>.");
-});
-
 // ERROR MIDDLEWARE
 app.use((req, res) => {
   res.status(404).json({
     message: "Page not found",
   });
 });
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ PAGE_PATHING END ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 app.listen(5000, () => {
   console.info(`App is running in localhost:5000`);
