@@ -4,10 +4,10 @@ import blogController from "../controller/blogController.js";
 const routerBlogs = express.Router();
 
 // GET METHOD BLOGS
-routerBlogs.get("/blogs/:id", blogController.get);
+routerBlogs.get("/blogs", blogController.get);
 
 // POST METHOD BLOGS
-routerBlogs.post("/blogs/:id", blogController.post);
+routerBlogs.post("/blogs", blogController.post);
 
 // PUT METHOD BLOGS
 routerBlogs.put("/blogs/:id", blogController.put);
