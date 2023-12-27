@@ -1,5 +1,6 @@
 import express from "express";
 import cookieParser from "cookie-parser";
+import {routerProfile} from './src/router/profile.js'
 
 const app = express();
 
@@ -8,7 +9,7 @@ app.use(cookieParser());
 // to read json from body
 app.use(express.json());
 
-// middleware learning >> logging
+// middleware learning >> logging, requst is done?, authentication test.
 app.use((req, res, next) => {
   let time = new Date().toLocaleDateString();
   const log = {
@@ -16,7 +17,7 @@ app.use((req, res, next) => {
     method: req.method,
     path: req.path,
     query: req.query,
-    cookies: req.cookies,
+    cookies: req.signedCookies,
     protocol: req.protocol,
     body: req.body,
   };
@@ -32,7 +33,6 @@ app.use((req, res, next) => {
 const homeMessage = { message: "OK from Home page", status: 200 };
 const educationsMessage = { message: "OK from Educations Page", status: 200 };
 const blogsMessage = { message: "OK from Blogs Page", status: 200 };
-const profileMessage = { message: "OK from Profile Page", status: 200 };
 const projectsMessage = { message: "OK from Projects Page", status: 200 };
 const skillsMessage = { message: "OK from Skills Page", status: 200 };
 
@@ -42,6 +42,11 @@ const skillsMessage = { message: "OK from Skills Page", status: 200 };
 app.get("/", (req, res) => {
   res.status(200).json(homeMessage);
 });
+
+// ---------- PROFILE -----------
+
+app.use(routerProfile)
+
 
 // -------------- EDUCATIONS ----------------
 
@@ -122,33 +127,6 @@ app.patch("/projects/:id", (req, res) => {
 // DELETE METHOD PROJECTS
 app.delete("/projects/:id", (req, res) => {
   res.status(200).json(projectsMessage);
-});
-
-// ---------- PROFILE -----------
-
-// GET METHOD PROFILE
-app.get("/profile/:id", (req, res) => {
-  res.status(200).json(profileMessage);
-});
-
-// POST METHOD  PROFILE
-app.post("/profile/:id", (req, res) => {
-  res.status(200).json(profileMessage);
-});
-
-// PUT METHOD PROFILE
-app.put("/profile/:id", (req, res) => {
-  res.status(200).json(profileMessage);
-});
-
-// PATCH METHOD PROFILE
-app.patch("/profile/:id", (req, res) => {
-  res.status(200).json(profileMessage);
-});
-
-// DELETE METHOD PROFILE
-app.delete("/profile/:id", (req, res) => {
-  res.status(200).json(profileMessage);
 });
 
 // ---------- SKILLS ----------
