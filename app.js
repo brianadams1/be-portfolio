@@ -5,6 +5,7 @@ import { routerEducation } from "./src/router/education.js";
 import { routerBlogs } from "./src/router/blog.js";
 import { routerProject } from "./src/router/project.js";
 import { routerSkill } from "./src/router/skill.js";
+import { routerAuth } from "./src/router/auth.js";
 
 const app = express();
 
@@ -36,12 +37,12 @@ app.use((req, res, next) => {
 
 const homeMessage = { message: "OK from Home page", status: 200 };
 
-// ------------ HOME --------------
+// ------------ HOME -------------- (now useless)
 
-// GET METHOD HOME
-app.get("/", (req, res) => {
-  res.status(200).json(homeMessage);
-});
+// GET METHOD HOME 
+// app.get("/", (req, res) => {
+//   res.status(200).json(homeMessage);
+// });
 
 // ---------- PROFILE -----------
 
@@ -64,31 +65,9 @@ app.use(routerProject)
 
 app.use(routerSkill)
 
-// ---------- LOGIN -----------
+// ---------- LOGIN & LOGOUT -----------
 
-// POST METHOD  LOGIN
-app.post("/login", (req, res) => {
-  res.cookie("token", "askdjbajfdlajsda");
-  res.cookie("username", "troll1234");
-  res.cookie("location", "Jakarta");
-
-  res.status(200).json({
-    message: "Logged in",
-  });
-});
-
-// ----------- LOGOUT ----------
-
-// DELETE METHOD LOGOUT
-app.delete("/logout", (req, res) => {
-  res.clearCookie("token");
-  res.clearCookie("username");
-  res.clearCookie("location");
-
-  res.status(200).json({
-    message: "Cookies cleared",
-  });
-});
+app.use(routerAuth)
 
 // ERROR MIDDLEWARE
 app.use((req, res) => {
