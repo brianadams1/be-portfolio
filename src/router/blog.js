@@ -1,31 +1,21 @@
 import express from "express";
+import blogController from "../controller/blogController.js";
 
 const routerBlogs = express.Router();
-const blogsMessage = { message: "OK from Blogs Page", status: 200 };
 
 // GET METHOD BLOGS
-routerBlogs.get("/blogs/id", (req, res) => {
-  res.status(200).json(blogsMessage);
-});
+routerBlogs.get("/blogs/:id", blogController.get);
 
 // POST METHOD BLOGS
-routerBlogs.post("/blogs/:id", (req, res) => {
-  res.status(200).json(blogsMessage);
-});
+routerBlogs.post("/blogs/:id", blogController.post);
 
 // PUT METHOD BLOGS
-routerBlogs.put("/blogs/:id", (req, res) => {
-  res.status(200).json(blogsMessage);
-});
+routerBlogs.put("/blogs/:id", blogController.put);
 
 // PATCH METHOD BLOGS
-routerBlogs.patch("/blogs/:id", (req, res) => {
-  res.status(200).json(blogsMessage);
-});
+routerBlogs.patch("/blogs/:id", blogController.patch);
 
 // DELETE METHOD BLOGS
-routerBlogs.delete("/blogs/:id", (req, res) => {
-  res.status(200).json(blogsMessage);
-});
+routerBlogs.delete("/blogs/:id", blogController.remove);
 
 export { routerBlogs };
