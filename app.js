@@ -1,6 +1,10 @@
 import express from "express";
 import cookieParser from "cookie-parser";
 import {routerProfile} from './src/router/profile.js'
+import { routerEducation } from "./src/router/education.js";
+import { routerBlogs } from "./src/router/blog.js";
+import { routerProject } from "./src/router/project.js";
+import { routerSkill } from "./src/router/skill.js";
 
 const app = express();
 
@@ -31,10 +35,6 @@ app.use((req, res, next) => {
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ PAGE_PATHING START ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 const homeMessage = { message: "OK from Home page", status: 200 };
-const educationsMessage = { message: "OK from Educations Page", status: 200 };
-const blogsMessage = { message: "OK from Blogs Page", status: 200 };
-const projectsMessage = { message: "OK from Projects Page", status: 200 };
-const skillsMessage = { message: "OK from Skills Page", status: 200 };
 
 // ------------ HOME --------------
 
@@ -50,111 +50,19 @@ app.use(routerProfile)
 
 // -------------- EDUCATIONS ----------------
 
-// GET METHOD EDUCATIONS
-app.get("/educations/:id", (req, res) => {
-  res.status(200).json(educationsMessage);
-});
-
-// POST METHOD EDUCATIONS
-app.post("/educations/:id", (req, res) => {
-  res.status(200).json(educationsMessage);
-});
-
-// PUT METHOD EDUCATIONS
-app.put("/educations/:id", (req, res) => {
-  res.status(200).json(educationsMessage);
-});
-
-// PATCH METHOD EDUCATIONS
-app.patch("/educations/:id", (req, res) => {
-  res.status(200).json(educationsMessage);
-});
-
-// DELETE METHOD EDUCATIONS
-app.delete("/educations/:id", (req, res) => {
-  res.status(200).json(educationsMessage);
-});
+app.use(routerEducation)
 
 // --------------- BLOGS -------------------
 
-// GET METHOD BLOGS
-app.get("/blogs/id", (req, res) => {
-  res.status(200).json(blogsMessage);
-});
-
-// POST METHOD BLOGS
-app.post("/blogs/:id", (req, res) => {
-  res.status(200).json(blogsMessage);
-});
-
-// PUT METHOD BLOGS
-app.put("/blogs/:id", (req, res) => {
-  res.status(200).json(blogsMessage);
-});
-
-// PATCH METHOD BLOGS
-app.patch("/blogs/:id", (req, res) => {
-  res.status(200).json(blogsMessage);
-});
-
-// DELETE METHOD BLOGS
-app.delete("/blogs/:id", (req, res) => {
-  res.status(200).json(blogsMessage);
-});
+app.use(routerBlogs)
 
 // ---------- PROJECTS -----------
 
-// GET METHOD PROJECTS
-app.get("/projects/:id", (req, res) => {
-  res.status(200).json(projectsMessage);
-});
-
-// POST METHOD  PROJECTS
-app.post("/projects/:id", (req, res) => {
-  res.status(200).json(projectsMessage);
-});
-
-// PUT METHOD PROJECTS
-app.put("/projects/:id", (req, res) => {
-  res.status(200).json(projectsMessage);
-});
-
-// PATCH METHOD PROJECTS
-app.patch("/projects/:id", (req, res) => {
-  res.status(200).json(projectsMessage);
-});
-
-// DELETE METHOD PROJECTS
-app.delete("/projects/:id", (req, res) => {
-  res.status(200).json(projectsMessage);
-});
+app.use(routerProject)
 
 // ---------- SKILLS ----------
 
-// GET METHOD SKILLS
-app.get("/skills", (req, res) => {
-  res.status(200).json(skillsMessage);
-});
-
-// POST METHOD SKILLS
-app.post("/skills", (req, res) => {
-  res.status(200).json(skillsMessage);
-});
-
-// PUT METHOD SKILLS
-app.put("/skills", (req, res) => {
-  res.status(200).json(skillsMessage);
-});
-
-// PATCH METHOD SKILLS
-app.patch("/skills", (req, res) => {
-  res.status(200).json(skillsMessage);
-});
-
-// DELETE METHOD SKILLS
-app.delete("/skills", (req, res) => {
-  res.status(200).json(skillsMessage);
-});
+app.use(routerSkill)
 
 // ---------- LOGIN -----------
 
