@@ -1,31 +1,21 @@
 import express from "express";
+import educationController from '../controller/educationController.js'
 
 const routerEducation = express.Router();
-const educationsMessage = { message: "OK from Educations Page", status: 200 };
 
 // GET METHOD EDUCATIONS
-routerEducation.get("/educations/:id", (req, res) => {
-  res.status(200).json(educationsMessage);
-});
+routerEducation.get("/educations",educationController.get);
 
 // POST METHOD EDUCATIONS
-routerEducation.post("/educations/:id", (req, res) => {
-  res.status(200).json(educationsMessage);
-});
+routerEducation.post("/educations",educationController.post);
 
 // PUT METHOD EDUCATIONS
-routerEducation.put("/educations/:id", (req, res) => {
-  res.status(200).json(educationsMessage);
-});
+routerEducation.put("/educations/:id",educationController.put);
 
 // PATCH METHOD EDUCATIONS
-routerEducation.patch("/educations/:id", (req, res) => {
-  res.status(200).json(educationsMessage);
-});
+routerEducation.patch("/educations/:id",educationController.patch);
 
 // DELETE METHOD EDUCATIONS
-routerEducation.delete("/educations/:id", (req, res) => {
-  res.status(200).json(educationsMessage);
-});
+routerEducation.delete("/educations/:id",educationController.remove);
 
 export { routerEducation };
