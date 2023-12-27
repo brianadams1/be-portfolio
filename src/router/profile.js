@@ -1,32 +1,16 @@
 import express from "express";
+import profileController from "../controller/profileController.js";
 
 const routerProfile = express.Router();
-const profileMessage = { message: "OK from Profile Page", status: 200 };
 
+routerProfile.get("/profile", profileController.get);
 
-// GET METHOD PROFILE
-routerProfile.get("/profile/:id", (req, res) => {
-  res.status(200).json(profileMessage);
-});
+routerProfile.post("/profile", profileController.post);
 
-// POST METHOD  PROFILE
-routerProfile.post("/profile/:id", (req, res) => {
-  res.status(200).json(profileMessage);
-});
+routerProfile.put("/profile/:id", profileController.put);
 
-// PUT METHOD PROFILE
-routerProfile.put("/profile/:id", (req, res) => {
-  res.status(200).json(profileMessage);
-});
+routerProfile.patch("/profile/:id", profileController.patch);
 
-// PATCH METHOD PROFILE
-routerProfile.patch("/profile/:id", (req, res) => {
-  res.status(200).json(profileMessage);
-});
-
-// DELETE METHOD PROFILE
-routerProfile.delete("/profile/:id", (req, res) => {
-  res.status(200).json(profileMessage);
-});
+routerProfile.delete("/profile/:id", profileController.remove);
 
 export { routerProfile };
