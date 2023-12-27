@@ -1,31 +1,17 @@
 import express from "express";
+import projectController from "../controller/projectController.js";
+
 
 const routerProject = express.Router();
-const projectsMessage = { message: "OK from Projects Page", status: 200 };
 
-// GET METHOD PROJECTS
-routerProject.get("/projects/:id", (req, res) => {
-  res.status(200).json(projectsMessage);
-});
+routerProject.get("/projects", projectController.get);
 
-// POST METHOD  PROJECTS
-routerProject.post("/projects/:id", (req, res) => {
-  res.status(200).json(projectsMessage);
-});
+routerProject.post("/projects", projectController.post);
 
-// PUT METHOD PROJECTS
-routerProject.put("/projects/:id", (req, res) => {
-  res.status(200).json(projectsMessage);
-});
+routerProject.put("/projects/:id", projectController.put);
 
-// PATCH METHOD PROJECTS
-routerProject.patch("/projects/:id", (req, res) => {
-  res.status(200).json(projectsMessage);
-});
+routerProject.patch("/projects/:id", projectController.patch);
 
-// DELETE METHOD PROJECTS
-routerProject.delete("/projects/:id", (req, res) => {
-  res.status(200).json(projectsMessage);
-});
+routerProject.delete("/projects/:id", projectController.remove);
 
 export { routerProject };
