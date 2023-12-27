@@ -1,11 +1,13 @@
 import express from "express";
 import cookieParser from "cookie-parser";
-import {routerProfile} from './src/router/profile.js'
+import { routerProfile } from "./src/router/profile.js";
 import { routerEducation } from "./src/router/education.js";
 import { routerBlogs } from "./src/router/blog.js";
 import { routerProject } from "./src/router/project.js";
 import { routerSkill } from "./src/router/skill.js";
 import { routerAuth } from "./src/router/auth.js";
+import { notFound } from "./src/router/notfound.js";
+import { logging } from "./src/middleware/logging.js";
 
 const app = express();
 
@@ -14,24 +16,8 @@ app.use(cookieParser());
 // to read json from body
 app.use(express.json());
 
-// middleware learning >> logging, requst is done?, authentication test.
-app.use((req, res, next) => {
-  let time = new Date().toLocaleDateString();
-  const log = {
-    time: time,
-    method: req.method,
-    path: req.path,
-    query: req.query,
-    cookies: req.signedCookies,
-    protocol: req.protocol,
-    body: req.body,
-  };
-  console.info(log);
-  // save to database
-  console.log("===============================");
-  console.log("Waiting to save log to database");
-  next();
-});
+// middleware 
+app.use(logging)
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ PAGE_PATHING START ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -39,42 +25,39 @@ const homeMessage = { message: "OK from Home page", status: 200 };
 
 // ------------ HOME -------------- (now useless)
 
-// GET METHOD HOME 
+// GET METHOD HOME
 // app.get("/", (req, res) => {
 //   res.status(200).json(homeMessage);
 // });
 
 // ---------- PROFILE -----------
 
-app.use(routerProfile)
-
+app.use(routerProfile);
 
 // -------------- EDUCATIONS ----------------
 
-app.use(routerEducation)
+app.use(routerEducation);
 
 // --------------- BLOGS -------------------
 
-app.use(routerBlogs)
+app.use(routerBlogs);
 
 // ---------- PROJECTS -----------
 
-app.use(routerProject)
+app.use(routerProject);
 
 // ---------- SKILLS ----------
 
-app.use(routerSkill)
+app.use(routerSkill);
 
 // ---------- LOGIN & LOGOUT -----------
 
-app.use(routerAuth)
+app.use(routerAuth);
 
-// ERROR MIDDLEWARE
-app.use((req, res) => {
-  res.status(404).json({
-    message: "Page not found",
-  });
-});
+// ------------- ERROR MIDDLEWARE -----------------
+
+app.use(notFound)
+
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ PAGE_PATHING END ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 app.listen(5000, () => {
