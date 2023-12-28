@@ -3,19 +3,12 @@ import blogController from "../controller/blogController.js";
 
 const routerBlogs = express.Router();
 
-// GET METHOD BLOGS
-routerBlogs.get("/blogs", blogController.get);
+routerBlogs.route("/blogs").get(blogController.get).post(blogController.post);
 
-// POST METHOD BLOGS
-routerBlogs.post("/blogs", blogController.post);
-
-// PUT METHOD BLOGS
-routerBlogs.put("/blogs/:id", blogController.put);
-
-// PATCH METHOD BLOGS
-routerBlogs.patch("/blogs/:id", blogController.patch);
-
-// DELETE METHOD BLOGS
-routerBlogs.delete("/blogs/:id", blogController.remove);
+routerBlogs
+  .route("/blogs/:id")
+  .put(blogController.put)
+  .patch(blogController.patch)
+  .delete(blogController.remove);
 
 export { routerBlogs };
