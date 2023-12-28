@@ -1,17 +1,17 @@
 import express from "express";
 import projectController from "../controller/projectController.js";
 
-
 const routerProject = express.Router();
 
-routerProject.get("/projects", projectController.get);
+routerProject
+  .route("/projects")
+  .get(projectController.get)
+  .post(projectController.post);
 
-routerProject.post("/projects", projectController.post);
-
-routerProject.put("/projects/:id", projectController.put);
-
-routerProject.patch("/projects/:id", projectController.patch);
-
-routerProject.delete("/projects/:id", projectController.remove);
+routerProject
+  .route("/projects/:id")
+  .put(projectController.put)
+  .patch(projectController.patch)
+  .delete(projectController.remove);
 
 export { routerProject };
