@@ -3,17 +3,13 @@ import skillController from "../controller/skillController.js";
 
 export const routerSkill = express.Router();
 
-// GET METHOD SKILLS
-routerSkill.get("/skills", skillController.get);
+routerSkill
+  .route("/skills")
+  .get(skillController.get)
+  .post(skillController.post);
 
-// POST METHOD SKILLS
-routerSkill.post("/skills", skillController.post);
-
-// PUT METHOD SKILLS
-routerSkill.put("/skills/:id", skillController.put);
-
-// PATCH METHOD SKILLS
-routerSkill.patch("/skills/:id", skillController.patch);
-
-// DELETE METHOD SKILLS
-routerSkill.delete("/skills/:id", skillController.remove);
+routerSkill
+  .route("/skills/:id")
+  .put(skillController.put)
+  .patch(skillController.patch)
+  .delete(skillController.remove);
