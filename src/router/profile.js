@@ -3,14 +3,15 @@ import profileController from "../controller/profileController.js";
 
 const routerProfile = express.Router();
 
-routerProfile.get("/profile", profileController.get);
+routerProfile
+  .route("/profile")
+  .get(profileController.get)
+  .post(profileController.post);
 
-routerProfile.post("/profile", profileController.post);
-
-routerProfile.put("/profile/:id", profileController.put);
-
-routerProfile.patch("/profile/:id", profileController.patch);
-
-routerProfile.delete("/profile/:id", profileController.remove);
+routerProfile
+  .route("/profile/:id")
+  .put(profileController.put)
+  .patch(profileController.patch)
+  .delete(profileController.remove);
 
 export { routerProfile };
