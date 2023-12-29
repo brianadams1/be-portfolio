@@ -5,7 +5,9 @@
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
-    "dev": "nodemon app.js"
+    "dev": "nodemon app.js",
+    "migrate-create": "npx prisma migrate dev --create-only",
+    "migrate": "npx prisma migrate dev"
   },
   "author": "Adam Fitriyan <albashiroh.programming@gmail.com>",
   "license": "ISC",
