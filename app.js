@@ -64,5 +64,5 @@ app.use(notFound);
 const port = process.env.PORT || 5000;
 console.info(port);
 app.listen(5000, () => {
-  console.info(`App is running in localhost:5000`);
+  console.info(`App is running in localhost:${port}`);
 });
