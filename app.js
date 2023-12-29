@@ -1,5 +1,7 @@
 import express from "express";
 import cookieParser from "cookie-parser";
+import dotenv from "dotenv";
+dotenv.config();
 import { routerProfile } from "./src/router/profile.js";
 import { routerEducation } from "./src/router/education.js";
 import { routerBlogs } from "./src/router/blog.js";
@@ -16,8 +18,8 @@ app.use(cookieParser());
 // to read json from body
 app.use(express.json());
 
-// middleware 
-app.use(logging)
+// middleware
+app.use(logging);
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ PAGE_PATHING START ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -56,10 +58,11 @@ app.use(routerAuth);
 
 // ------------- ERROR MIDDLEWARE -----------------
 
-app.use(notFound)
+app.use(notFound);
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ PAGE_PATHING END ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
+const port = process.env.PORT || 5000;
+console.info(port);
 app.listen(5000, () => {
   console.info(`App is running in localhost:5000`);
 });
