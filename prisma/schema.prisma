@@ -52,3 +52,26 @@ model Blog {
 @@map("blog")
 }
 
+model Project {
+  id Int @id @default(autoincrement())
+  title String @db.VarChar(255)
+  description String @db.Text
+  startDate DateTime @db.Date
+  endDate DateTime? @db.Date
+  status ProjectStatus @default(ON_PROGRESS)
+  url String? @db.VarChar(100)
+  github String? @db.VarChar(100)
+  gitlab String? @db.VarChar(100)
+  company String? @db.VarChar(100)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  @@map("project")
+}
+
+enum ProjectStatus {
+  ON_PROGRESS
+  MAINTENANCE
+  COMPLETE
+}
+
