@@ -1,9 +1,9 @@
-import { prisma } from "../app/prisma.js";
+// import { Prisma } from "../app/prisma.js";
 
 // POST METHOD  LOGIN
 
-const login = async (req, res) => {
-  const user = await prisma.user.findMany()
+const login = (req, res) => {
+  // const user = await prisma.user.findMany() >> should use async
   console.info(user)
   res.cookie("token", "askdjbajfdlajsda");
   res.cookie("username", "troll1234");
