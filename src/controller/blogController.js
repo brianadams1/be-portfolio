@@ -24,6 +24,12 @@ const get = async (req, res) => {
   const blog = await Prisma.blog.findUnique({
     where: { id },
   });
+  if (blog == null) {
+    res.status(404).json({
+      message: `TIDAK ADA DATA BLOG ${id}`,
+      
+    });
+  }
   res.status(200).json({
     message: "BERHASIL MENDAPATKAN DATA BLOG DENGAN ID",
     blog: blog,
@@ -32,7 +38,6 @@ const get = async (req, res) => {
 
 // POST METHOD BLOGS
 const post = (req, res) => {
-  
   res.status(200).json({
     message: "BERHASIL SAVE BLOG BARU",
   });
