@@ -1,39 +1,57 @@
 import { Prisma } from "../app/prisma.js";
 
 const blogsMessage = { message: "OK from Blogs Page", status: 200 };
-
-/*
-ive tried so hard and got so fast but in the end it doesnt even matter
-
-*/
-
 // GETALL METHOD BLOGS
 const getAll = async (req, res) => {
-  // FIND MANY >> ambil semua blog
-  const datas = await Prisma.blog.findMany();
-  res.status(200).json({
-    message: "BERHASIL MENDAPATKAN SEMUA DATA BLOG",
-    blogs: datas,
-  });
+  try {
+    // FIND MANY >> ambil semua blog
+    const datas = await Prisma.blog.findMany();
+    res.status(200).json({
+      message: "BERHASIL MENDAPATKAN SEMUA DATA BLOG",
+      blogs: datas,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: `Server error: ${error.message}`,
+    });
+  }
 };
 // GET METHOD BLOG BY ID
 const get = async (req, res) => {
-  let id = req.params.id;
-  id = parseInt(id);
-  // FINDUNIQUE >> AMBIL BLOG BERDASARKAN ID
-  const blog = await Prisma.blog.findUnique({
-    where: { id },
-  });
-  if (blog == null) {
-    res.status(404).json({
-      message: `TIDAK ADA DATA BLOG ${id}`,
-      
+  // IF SERVER IS OK
+  try {
+    let id = req.params.id;
+    if(!Number(id)){
+      return res.status(400).json({
+        message: 'ID is invalid'
+      })
+    }
+    if(isNaN(id)){
+      return res.status(400).json({
+        message: 'ID is invalid'
+      })
+    }
+    id = Number(id);
+    // atau id = parseInt(id);
+    const blog = await Prisma.blog.findUnique({
+      where: { id },
+    });
+    // HANDLE NOT FOUND
+    if (blog == null) {
+      return res.status(404).json({
+        message: `TIDAK ADA DATA BLOG ${id}`,
+      });
+    }
+    res.status(200).json({
+      message: "BERHASIL MENDAPATKAN DATA BLOG DENGAN ID",
+      blog: blog,
+    });
+  } catch (error) {
+    // IF SERVER IS DOWN
+    res.status(500).json({
+      message: `Server error : ${error.message}`,
     });
   }
-  res.status(200).json({
-    message: "BERHASIL MENDAPATKAN DATA BLOG DENGAN ID",
-    blog: blog,
-  });
 };
 
 // POST METHOD BLOGS
