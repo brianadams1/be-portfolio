@@ -23,12 +23,12 @@ const get = async (req, res) => {
     let id = req.params.id;
     if(!Number(id)){
       return res.status(400).json({
-        message: 'ID is invalid'
+        message: 'ID is invalid : not Number'
       })
     }
     if(isNaN(id)){
       return res.status(400).json({
-        message: 'ID is invalid'
+        message: 'ID is invalid : Not a Number'
       })
     }
     id = Number(id);
@@ -55,15 +55,39 @@ const get = async (req, res) => {
 };
 
 // POST METHOD BLOGS
-const post = (req, res) => {
-  res.status(200).json({
-    message: "BERHASIL SAVE BLOG BARU",
-  });
+const post = async (req, res) => {
+  try {
+    const blog = req.body
+    if(!blog.title || !blog.content){
+      return res.status(400).json({
+        message: "Please fill title and content box"
+      })
+    }
+    if(blog.title.length < 3 || blog.content.length < 3){
+      return res.status(400).json({
+        message: "Title or content must contain at least 3 characters or more"
+      })
+    }
+    const newBlog = await Prisma.blog.create({
+      data:blog
+    })
+    res.status(200).json({
+      message: "BERHASIL MENYIMPAN DATA BLOG BARU",
+      data: newBlog
+    })
+  } catch (error) {
+    
+    res.status(500).json({
+      message: `Server error : ${error.message}`
+    });
+  }
 };
 
 // PUT METHOD BLOGS
 const put = (req, res) => {
-  res.status(200).json(blogsMessage);
+  res.status(200).json({
+    message: "BERHASIL SAVE BLOG BARU",
+  });
 };
 
 // PATCH METHOD BLOGS
