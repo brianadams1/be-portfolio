@@ -11,7 +11,7 @@ routerBlogs.get('/blog/:id',blogController.get)
 routerBlogs.post('/blog',blogController.post);
 
 routerBlogs
-  .route("/blogs/:id")
+  .route("/blog/:id")
   .put(blogController.put)
   .patch(blogController.patch)
   .delete(blogController.remove);

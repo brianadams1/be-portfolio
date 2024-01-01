@@ -21,15 +21,15 @@ const get = async (req, res) => {
   // IF SERVER IS OK
   try {
     let id = req.params.id;
-    if(!Number(id)){
+    if (!Number(id)) {
       return res.status(400).json({
-        message: 'ID is invalid : not Number'
-      })
+        message: "ID is invalid : not Number",
+      });
     }
-    if(isNaN(id)){
+    if (isNaN(id)) {
       return res.status(400).json({
-        message: 'ID is invalid : Not a Number'
-      })
+        message: "ID is invalid : Not a Number",
+      });
     }
     id = Number(id);
     // atau id = parseInt(id);
@@ -57,37 +57,80 @@ const get = async (req, res) => {
 // POST METHOD BLOGS
 const post = async (req, res) => {
   try {
-    const blog = req.body
-    if(!blog.title || !blog.content){
+    const blog = req.body;
+    if (!blog.title || !blog.content) {
       return res.status(400).json({
-        message: "Please fill title and content box"
-      })
+        message: "Please fill title and content box",
+      });
     }
-    if(blog.title.length < 3 || blog.content.length < 3){
+    if (blog.title.length < 3 || blog.content.length < 3) {
       return res.status(400).json({
-        message: "Title or content must contain at least 3 characters or more"
-      })
+        message: "Title or content must contain at least 3 characters or more",
+      });
     }
     const newBlog = await Prisma.blog.create({
-      data:blog
-    })
+      data: blog,
+    });
     res.status(200).json({
       message: "BERHASIL MENYIMPAN DATA BLOG BARU",
-      data: newBlog
-    })
+      data: newBlog,
+    });
   } catch (error) {
-    
     res.status(500).json({
-      message: `Server error : ${error.message}`
+      message: `Server error : ${error.message}`,
     });
   }
 };
 
 // PUT METHOD BLOGS
-const put = (req, res) => {
-  res.status(200).json({
-    message: "BERHASIL SAVE BLOG BARU",
-  });
+const put = async (req, res) => {
+  try {
+    const blog = req.body;
+    let id = req.params.id;
+    if (isNaN(id)) {
+      // 400 BAD REQUEST
+      return res.status(400).json({
+        message: "ID is invalid : Not a Number",
+      });
+    }
+    id = Number(id);
+
+    if (!blog.title || !blog.content) {
+      // 400 BAD REQUEST
+      return res.status(400).json({
+        message: "Please fill title and content box",
+      });
+    }
+    if (blog.title.length < 3 || blog.content.length < 3) {
+      // 400 BAD REQUEST
+      return res.status(400).json({
+        message: "Title or content must contain at least 3 characters or more",
+      });
+    }
+    const currentBlog = await Prisma.blog.findUnique({
+      where: { id },
+      select: { id: true },
+    });
+    console.log(currentBlog)
+    if (!currentBlog) {
+      // 404 BLOG NOT FOUND
+      return res.status(404).json({
+        message: `Blog with ID : ${id} is not found`,
+      });
+    }
+    const update = await Prisma.blog.update({
+      where: {id},
+      data: blog
+    })
+
+    res.status(200).json({
+      message: "BERHASIL UPDATE KESELURUHAN DATA BLOG",
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Server error : " + error.message,
+    });
+  }
 };
 
 // PATCH METHOD BLOGS
