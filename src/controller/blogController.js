@@ -1,3 +1,4 @@
+import { join } from "@prisma/client/runtime/library.js";
 import { Prisma } from "../app/prisma.js";
 import Joi from "joi";
 
@@ -31,8 +32,8 @@ const get = async (req, res) => {
         message: validate.error.message,
       });
     }
-    
-    id = validate.value
+
+    id = validate.value;
 
     const blog = await Prisma.blog.findUnique({
       where: { id },
@@ -59,16 +60,24 @@ const get = async (req, res) => {
 const post = async (req, res) => {
   try {
     const blog = req.body;
-    if (!blog.title || !blog.content) {
+    // START : JOI VALIDATE BLOG
+    // USING OBJECT VALIDATION
+
+    const schemaBlog = Joi.object({
+      title: Joi.string().min(3).required().label("Title"),
+      content: Joi.string().min(3).required().label("Content")
+    })
+    const blogValidate = schemaBlog.validate(blog,{
+      abortEarly: false
+    })
+
+    if(blogValidate.error){
       return res.status(400).json({
-        message: "Please fill title and content box",
-      });
+        message: blogValidate.error.message
+      })
     }
-    if (blog.title.length < 3 || blog.content.length < 3) {
-      return res.status(400).json({
-        message: "Title or content must contain at least 3 characters or more",
-      });
-    }
+    // END : JOI VALIDATE BLOG
+    
     const newBlog = await Prisma.blog.create({
       data: blog,
     });
