@@ -22,9 +22,9 @@ const get = async (req, res) => {
   // IF SERVER IS OK
   try {
     let id = req.params.id;
-    
+
     // START : JOI VALIDATE ID
-    const schema = Joi.number().min(1).required();
+    const schema = Joi.number().positive().min(1).required().label("ID");
     const validate = schema.validate(id);
 
     if (validate.error) {
@@ -66,21 +66,21 @@ const post = async (req, res) => {
     // USING OBJECT VALIDATION
 
     const schemaBlog = Joi.object({
-      title: Joi.string().positive().trim().max(255).required().label("Title"),
-      content: Joi.string().min(3).required().label("Content")
-    })
-    const blogValidate = schemaBlog.validate(blog,{
-      abortEarly: false
-    })
+      title: Joi.string().trim().max(255).required().label("Title"),
+      content: Joi.string().min(3).required().label("Content"),
+    });
+    const blogValidate = schemaBlog.validate(blog, {
+      abortEarly: false,
+    });
 
-    if(blogValidate.error){
+    if (blogValidate.error) {
       return res.status(400).json({
-        message: blogValidate.error.message
-      })
+        message: blogValidate.error.message,
+      });
     }
-    blog = blogValidate.value
+    blog = blogValidate.value;
     // END : JOI VALIDATE BLOG
-    
+
     const newBlog = await Prisma.blog.create({
       data: blog,
     });
@@ -102,7 +102,7 @@ const put = async (req, res) => {
     let id = req.params.id;
 
     // START: JOI VALIDATE ID
-    const schema = Joi.number().min(1).required();
+    const schema = Joi.number().positive().min(1).required().label("ID");
     const validate = schema.validate(id);
 
     if (validate.error) {
@@ -113,24 +113,24 @@ const put = async (req, res) => {
 
     id = validate.value;
     // END: JOI VALIDATE ID
-    
+
     // START : JOI VALIDATE BLOG
     // USING OBJECT VALIDATION
 
     const schemaBlog = Joi.object({
       title: Joi.string().positive().trim().max(255).required().label("Title"),
-      content: Joi.string().min(3).required().label("Content")
-    })
-    const blogValidate = schemaBlog.validate(blog,{
-      abortEarly: false
-    })
+      content: Joi.string().min(3).required().label("Content"),
+    });
+    const blogValidate = schemaBlog.validate(blog, {
+      abortEarly: false,
+    });
 
-    if(blogValidate.error){
+    if (blogValidate.error) {
       return res.status(400).json({
-        message: blogValidate.error.message
-      })
+        message: blogValidate.error.message,
+      });
     }
-    blog = blogValidate.value
+    blog = blogValidate.value;
     // END : JOI VALIDATE BLOG
 
     // check if current blog is available
@@ -163,29 +163,37 @@ const put = async (req, res) => {
 // PATCH METHOD BLOGS
 const updateTitle = async (req, res) => {
   try {
-    const blog = req.body;
-
+    let title = req.body.title;
     let id = req.params.id;
-    if (isNaN(id)) {
-      // 400 BAD REQUEST
-      return res.status(400).json({
-        message: "ID is invalid : Not a Number",
-      });
-    }
-    id = Number(id);
 
-    if (!blog.title) {
-      // 400 BAD REQUEST
+    // START: JOI VALIDATE ID
+    const schema = Joi.number().positive().min(1).required().label("ID");
+    const validate = schema.validate(id);
+
+    if (validate.error) {
       return res.status(400).json({
-        message: "Please fill title box",
+        message: validate.error.message,
       });
     }
-    if (blog.title.length < 3) {
-      // 400 BAD REQUEST
+
+    id = validate.value;
+    // END: JOI VALIDATE ID
+
+    // START : JOI VALIDATE BLOG
+    // USING OBJECT VALIDATION
+
+    const schemaTitle = Joi.string().trim().max(255).required().label("Title");
+
+    const titleValidate = schemaTitle.validate(title);
+
+    if (titleValidate.error) {
       return res.status(400).json({
-        message: "Title must contain at least 3 characters or more",
+        message: titleValidate.error.message,
       });
     }
+    title = titleValidate.value;
+    // END : JOI VALIDATE BLOG
+
     // check if current blog is available
     const currentBlog = await Prisma.blog.findUnique({
       where: { id },
@@ -202,7 +210,7 @@ const updateTitle = async (req, res) => {
     // UPDATE TITLE EXECUTION
     const updateTitle = await Prisma.blog.update({
       where: { id },
-      data: blog,
+      data: { title },
     });
     res.status(200).json({
       message: `UPDATE TITLE BLOG ID ${id} SUCCESSFUL`,
@@ -220,13 +228,20 @@ const remove = async (req, res) => {
   try {
     const blog = req.body;
     let id = req.params.id;
-    if (isNaN(id)) {
-      // 400 BAD REQUEST
+
+    // START: JOI VALIDATE ID
+    const schema = Joi.number().positive().min(1).required().label("ID");
+    const validate = schema.validate(id);
+
+    if (validate.error) {
       return res.status(400).json({
-        message: "ID is invalid : Not a Number",
+        message: validate.error.message,
       });
     }
-    id = Number(id);
+
+    id = validate.value;
+    // END: JOI VALIDATE ID
+
     // check if current blog is available
     const currentBlog = await Prisma.blog.findUnique({
       where: { id },
