@@ -107,11 +107,12 @@ const put = async (req, res) => {
         message: "Title or content must contain at least 3 characters or more",
       });
     }
+    // check if current blog is available
     const currentBlog = await Prisma.blog.findUnique({
       where: { id },
       select: { id: true },
     });
-    console.log(currentBlog)
+    console.log(currentBlog);
     if (!currentBlog) {
       // 404 BLOG NOT FOUND
       return res.status(404).json({
@@ -119,9 +120,9 @@ const put = async (req, res) => {
       });
     }
     const update = await Prisma.blog.update({
-      where: {id},
-      data: blog
-    })
+      where: { id },
+      data: blog,
+    });
 
     res.status(200).json({
       message: "BERHASIL UPDATE KESELURUHAN DATA BLOG",
@@ -139,8 +140,43 @@ const patch = (req, res) => {
 };
 
 // DELETE METHOD BLOGS
-const remove = (req, res) => {
-  res.status(200).json(blogsMessage);
+const remove = async (req, res) => {
+  try {
+    const blog = req.body;
+    let id = req.params.id;
+    if (isNaN(id)) {
+      // 400 BAD REQUEST
+      return res.status(400).json({
+        message: "ID is invalid : Not a Number",
+      });
+    }
+    id = Number(id);
+    // check if current blog is available
+    const currentBlog = await Prisma.blog.findUnique({
+      where: { id },
+      select: { id: true },
+    });
+    console.log(currentBlog);
+    if (!currentBlog) {
+      // 404 BLOG NOT FOUND
+      return res.status(404).json({
+        message: `Blog with ID ${id} is not found`,
+      });
+    }
+
+    // DELETE EXECUTION
+    const deleteBlog = await Prisma.blog.delete({
+      where: {id}
+    })
+
+    res.status(200).json({
+      message: `DELETE DATA WITH ID ${id} IS SUCCESSFUL`,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Server error : " + error.message,
+    });
+  }
 };
 
 export default {
