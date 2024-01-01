@@ -13,7 +13,8 @@ routerBlogs.post('/blog',blogController.post);
 routerBlogs
   .route("/blog/:id")
   .put(blogController.put)
-  .patch(blogController.patch)
   .delete(blogController.remove);
+
+routerBlogs.patch('/update_blog_title/:id', blogController.updateTitle)
 
 export { routerBlogs };

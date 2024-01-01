@@ -112,7 +112,7 @@ const put = async (req, res) => {
       where: { id },
       select: { id: true },
     });
-    console.log(currentBlog);
+
     if (!currentBlog) {
       // 404 BLOG NOT FOUND
       return res.status(404).json({
@@ -135,8 +135,60 @@ const put = async (req, res) => {
 };
 
 // PATCH METHOD BLOGS
-const patch = (req, res) => {
-  res.status(200).json(blogsMessage);
+const updateTitle = async (req, res) => {
+  try {
+    const blog = req.body;
+
+    let id = req.params.id;
+    if (isNaN(id)) {
+      // 400 BAD REQUEST
+      return res.status(400).json({
+        message: "ID is invalid : Not a Number",
+      });
+    }
+    id = Number(id);
+
+    if (!blog.title) {
+      // 400 BAD REQUEST
+      return res.status(400).json({
+        message: "Please fill title box",
+      });
+    }
+    if (blog.title.length < 3) {
+      // 400 BAD REQUEST
+      return res.status(400).json({
+        message: "Title must contain at least 3 characters or more",
+      });
+    }
+    // check if current blog is available
+    const currentBlog = await Prisma.blog.findUnique({
+      where: { id },
+      select: { id: true },
+    });
+
+    if (!currentBlog) {
+      // 404 BLOG NOT FOUND
+      return res.status(404).json({
+        message: `Blog with ID ${id} is not found`,
+      });
+    }
+
+    // UPDATE TITLE EXECUTION
+    const updateTitle = await Prisma.blog.update({
+      where: {id},
+      data: blog
+    })
+    res.status(200).json({
+      message: `UPDATE TITLE BLOG ID ${id} SUCCESSFUL`,
+      data: updateTitle
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      message: "Server error : " + error.message,
+    });
+  }
+  
 };
 
 // DELETE METHOD BLOGS
@@ -156,7 +208,7 @@ const remove = async (req, res) => {
       where: { id },
       select: { id: true },
     });
-    console.log(currentBlog);
+
     if (!currentBlog) {
       // 404 BLOG NOT FOUND
       return res.status(404).json({
@@ -168,10 +220,10 @@ const remove = async (req, res) => {
     const deleteBlog = await Prisma.blog.delete({
       where: {id}
     })
-
     res.status(200).json({
       message: `DELETE DATA WITH ID ${id} IS SUCCESSFUL`,
     });
+
   } catch (error) {
     res.status(500).json({
       message: "Server error : " + error.message,
@@ -184,6 +236,6 @@ export default {
   get,
   post,
   put,
-  patch,
+  updateTitle,
   remove,
 };
