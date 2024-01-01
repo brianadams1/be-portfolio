@@ -115,7 +115,7 @@ const put = async (req, res) => {
     if (!currentBlog) {
       // 404 BLOG NOT FOUND
       return res.status(404).json({
-        message: `Blog with ID : ${id} is not found`,
+        message: `Blog with ID ${id} is not found`,
       });
     }
     const update = await Prisma.blog.update({
