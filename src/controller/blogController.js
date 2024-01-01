@@ -22,26 +22,18 @@ const get = async (req, res) => {
   // IF SERVER IS OK
   try {
     let id = req.params.id;
-    // if (!Number(id)) {
-    //   return res.status(400).json({
-    //     message: "ID is invalid : not Number",
-    //   });
-    // }
-    // if (isNaN(id)) {
-    //   return res.status(400).json({
-    //     message: "ID is invalid : Not a Number",
-    //   });
-    // }
 
     const schema = Joi.number().min(1).required();
     const validate = schema.validate(id);
-    console.info(validate);
+
     if (validate.error) {
       return res.status(400).json({
         message: validate.error.message,
       });
     }
-    id = parseInt(id); // or id = Number(id);
+    
+    id = validate.value
+
     const blog = await Prisma.blog.findUnique({
       where: { id },
     });
