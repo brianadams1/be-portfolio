@@ -1,4 +1,5 @@
 import { Prisma } from "../app/prisma.js";
+import Joi from "joi";
 
 const blogsMessage = { message: "OK from Blogs Page", status: 200 };
 // GETALL METHOD BLOGS
@@ -7,8 +8,8 @@ const getAll = async (req, res) => {
     // FIND MANY >> ambil semua blog
     const datas = await Prisma.blog.findMany();
     res.status(200).json({
-      message: "BERHASIL MENDAPATKAN SEMUA DATA BLOG",
-      blogs: datas,
+      message: "SUCCESS GET ALL DATA BLOG",
+      data: datas,
     });
   } catch (error) {
     res.status(500).json({
@@ -21,30 +22,38 @@ const get = async (req, res) => {
   // IF SERVER IS OK
   try {
     let id = req.params.id;
-    if (!Number(id)) {
+    // if (!Number(id)) {
+    //   return res.status(400).json({
+    //     message: "ID is invalid : not Number",
+    //   });
+    // }
+    // if (isNaN(id)) {
+    //   return res.status(400).json({
+    //     message: "ID is invalid : Not a Number",
+    //   });
+    // }
+
+    const schema = Joi.number().min(1).required();
+    const validate = schema.validate(id);
+    console.info(validate);
+    if (validate.error) {
       return res.status(400).json({
-        message: "ID is invalid : not Number",
+        message: validate.error.message,
       });
     }
-    if (isNaN(id)) {
-      return res.status(400).json({
-        message: "ID is invalid : Not a Number",
-      });
-    }
-    id = Number(id);
-    // atau id = parseInt(id);
+    id = parseInt(id); // or id = Number(id);
     const blog = await Prisma.blog.findUnique({
       where: { id },
     });
     // HANDLE NOT FOUND
     if (blog == null) {
       return res.status(404).json({
-        message: `TIDAK ADA DATA BLOG ${id}`,
+        message: `NO DATA BLOG ${id}`,
       });
     }
     res.status(200).json({
-      message: "BERHASIL MENDAPATKAN DATA BLOG DENGAN ID",
-      blog: blog,
+      message: `SUCCESS GET BLOG DATA BY ID : ${id}`,
+      data: blog,
     });
   } catch (error) {
     // IF SERVER IS DOWN
@@ -175,20 +184,18 @@ const updateTitle = async (req, res) => {
 
     // UPDATE TITLE EXECUTION
     const updateTitle = await Prisma.blog.update({
-      where: {id},
-      data: blog
-    })
+      where: { id },
+      data: blog,
+    });
     res.status(200).json({
       message: `UPDATE TITLE BLOG ID ${id} SUCCESSFUL`,
-      data: updateTitle
+      data: updateTitle,
     });
-
   } catch (error) {
     res.status(500).json({
       message: "Server error : " + error.message,
     });
   }
-  
 };
 
 // DELETE METHOD BLOGS
@@ -218,12 +225,11 @@ const remove = async (req, res) => {
 
     // DELETE EXECUTION
     const deleteBlog = await Prisma.blog.delete({
-      where: {id}
-    })
+      where: { id },
+    });
     res.status(200).json({
       message: `DELETE DATA WITH ID ${id} IS SUCCESSFUL`,
     });
-
   } catch (error) {
     res.status(500).json({
       message: "Server error : " + error.message,
