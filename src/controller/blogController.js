@@ -1,4 +1,3 @@
-import { join } from "@prisma/client/runtime/library.js";
 import { Prisma } from "../app/prisma.js";
 import Joi from "joi";
 
@@ -23,7 +22,8 @@ const get = async (req, res) => {
   // IF SERVER IS OK
   try {
     let id = req.params.id;
-
+    
+    // START : JOI VALIDATE ID
     const schema = Joi.number().min(1).required();
     const validate = schema.validate(id);
 
@@ -34,6 +34,7 @@ const get = async (req, res) => {
     }
 
     id = validate.value;
+    // END : JOI VALIDATE ID
 
     const blog = await Prisma.blog.findUnique({
       where: { id },
@@ -59,12 +60,13 @@ const get = async (req, res) => {
 // POST METHOD BLOGS
 const post = async (req, res) => {
   try {
-    const blog = req.body;
+    let blog = req.body;
+
     // START : JOI VALIDATE BLOG
     // USING OBJECT VALIDATION
 
     const schemaBlog = Joi.object({
-      title: Joi.string().min(3).required().label("Title"),
+      title: Joi.string().positive().trim().max(255).required().label("Title"),
       content: Joi.string().min(3).required().label("Content")
     })
     const blogValidate = schemaBlog.validate(blog,{
@@ -76,6 +78,7 @@ const post = async (req, res) => {
         message: blogValidate.error.message
       })
     }
+    blog = blogValidate.value
     // END : JOI VALIDATE BLOG
     
     const newBlog = await Prisma.blog.create({
@@ -95,28 +98,41 @@ const post = async (req, res) => {
 // PUT METHOD BLOGS
 const put = async (req, res) => {
   try {
-    const blog = req.body;
+    let blog = req.body;
     let id = req.params.id;
-    if (isNaN(id)) {
-      // 400 BAD REQUEST
-      return res.status(400).json({
-        message: "ID is invalid : Not a Number",
-      });
-    }
-    id = Number(id);
 
-    if (!blog.title || !blog.content) {
-      // 400 BAD REQUEST
+    // START: JOI VALIDATE ID
+    const schema = Joi.number().min(1).required();
+    const validate = schema.validate(id);
+
+    if (validate.error) {
       return res.status(400).json({
-        message: "Please fill title and content box",
+        message: validate.error.message,
       });
     }
-    if (blog.title.length < 3 || blog.content.length < 3) {
-      // 400 BAD REQUEST
+
+    id = validate.value;
+    // END: JOI VALIDATE ID
+    
+    // START : JOI VALIDATE BLOG
+    // USING OBJECT VALIDATION
+
+    const schemaBlog = Joi.object({
+      title: Joi.string().positive().trim().max(255).required().label("Title"),
+      content: Joi.string().min(3).required().label("Content")
+    })
+    const blogValidate = schemaBlog.validate(blog,{
+      abortEarly: false
+    })
+
+    if(blogValidate.error){
       return res.status(400).json({
-        message: "Title or content must contain at least 3 characters or more",
-      });
+        message: blogValidate.error.message
+      })
     }
+    blog = blogValidate.value
+    // END : JOI VALIDATE BLOG
+
     // check if current blog is available
     const currentBlog = await Prisma.blog.findUnique({
       where: { id },
