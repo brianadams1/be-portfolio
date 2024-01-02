@@ -3,7 +3,6 @@ import { Validate } from "../app/validate.js";
 import { isID } from "../validation/mainValidation.js";
 import { isBlog, isBlogTitle,  } from "../validation/blogValidation.js";
 
-const blogsMessage = { message: "OK from Blogs Page", status: 200 };
 // GETALL METHOD BLOGS
 const getAll = async (req, res, next) => {
   try {
@@ -52,7 +51,6 @@ const get = async (req, res, next) => {
 const post = async (req, res, next) => {
   try {
     let blog = req.body;
-
     // JOI VALIDATE BLOG
     blog = Validate(isBlog, blog);
 
@@ -99,7 +97,7 @@ const put = async (req, res, next) => {
     });
 
     res.status(200).json({
-      message: "BERHASIL UPDATE KESELURUHAN DATA BLOG",
+      message: "SUCCESS REPLACE ALL BLOG DATA",
     });
   } catch (error) {
     next(error);
@@ -148,12 +146,10 @@ const updateTitle = async (req, res, next) => {
 // DELETE METHOD BLOGS
 const remove = async (req, res, next) => {
   try {
-    // const blog = req.body;
     let id = req.params.id;
 
     // JOI VALIDATE ID
     id = Validate(isID, id);
-
 
     // check if current blog is available
     const currentBlog = await Prisma.blog.findUnique({
