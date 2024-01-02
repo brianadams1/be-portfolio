@@ -10,6 +10,7 @@ import { routerSkill } from "./src/router/skill.js";
 import { routerAuth } from "./src/router/auth.js";
 import { notFound } from "./src/router/notfound.js";
 import { logging } from "./src/middleware/logging.js";
+import { errorAgain } from "./src/middleware/error.js";
 
 const app = express();
 
@@ -56,9 +57,13 @@ app.use(routerSkill);
 
 app.use(routerAuth);
 
-// ------------- ERROR MIDDLEWARE -----------------
+// ------------- 404 MIDDLEWARE -----------------
 
 app.use(notFound);
+
+// =============== ERROR MIDDLEWARE =====================
+
+app.use(errorAgain);
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ PAGE_PATHING END ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 const port = process.env.PORT || 5000;

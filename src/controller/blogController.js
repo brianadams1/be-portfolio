@@ -1,9 +1,10 @@
 import { Prisma } from "../app/prisma.js";
+import { Validate } from "../app/validate.js";
 import Joi from "joi";
 
 const blogsMessage = { message: "OK from Blogs Page", status: 200 };
 // GETALL METHOD BLOGS
-const getAll = async (req, res) => {
+const getAll = async (req, res, next) => {
   try {
     // FIND MANY >> ambil semua blog
     const datas = await Prisma.blog.findMany();
@@ -12,32 +13,23 @@ const getAll = async (req, res) => {
       data: datas,
     });
   } catch (error) {
-    res.status(500).json({
-      message: `Server error: ${error.message}`,
-    });
+    next(error);
   }
 };
 // GET METHOD BLOG BY ID
-const get = async (req, res) => {
+const get = async (req, res, next) => {
   // IF SERVER IS OK
   try {
     let id = req.params.id;
-
     // START : JOI VALIDATE ID
-    const schema = Joi.number().positive().min(1).required().label("ID");
-    const validate = schema.validate(id);
+    const schema = Joi.number().positive().required().label("ID");
+    id = Validate(schema, id);
 
-    if (validate.error) {
-      return res.status(400).json({
-        message: validate.error.message,
-      });
-    }
-
-    id = validate.value;
+    console.log(id);
     // END : JOI VALIDATE ID
 
     const blog = await Prisma.blog.findUnique({
-      where: { id },
+      where: { id: id },
     });
     // HANDLE NOT FOUND
     if (blog == null) {
@@ -51,14 +43,12 @@ const get = async (req, res) => {
     });
   } catch (error) {
     // IF SERVER IS DOWN
-    res.status(500).json({
-      message: `Server error : ${error.message}`,
-    });
+    next(error);
   }
 };
 
 // POST METHOD BLOGS
-const post = async (req, res) => {
+const post = async (req, res, next) => {
   try {
     let blog = req.body;
 
@@ -89,14 +79,12 @@ const post = async (req, res) => {
       data: newBlog,
     });
   } catch (error) {
-    res.status(500).json({
-      message: `Server error : ${error.message}`,
-    });
+    next(error);
   }
 };
 
 // PUT METHOD BLOGS
-const put = async (req, res) => {
+const put = async (req, res, next) => {
   try {
     let blog = req.body;
     let id = req.params.id;
@@ -135,7 +123,7 @@ const put = async (req, res) => {
 
     // check if current blog is available
     const currentBlog = await Prisma.blog.findUnique({
-      where: { id },
+      where: { id: id },
       select: { id: true },
     });
 
@@ -154,14 +142,12 @@ const put = async (req, res) => {
       message: "BERHASIL UPDATE KESELURUHAN DATA BLOG",
     });
   } catch (error) {
-    res.status(500).json({
-      message: "Server error : " + error.message,
-    });
+    next(error);
   }
 };
 
 // PATCH METHOD BLOGS
-const updateTitle = async (req, res) => {
+const updateTitle = async (req, res, next) => {
   try {
     let title = req.body.title;
     let id = req.params.id;
@@ -196,7 +182,7 @@ const updateTitle = async (req, res) => {
 
     // check if current blog is available
     const currentBlog = await Prisma.blog.findUnique({
-      where: { id },
+      where: { id: id },
       select: { id: true },
     });
 
@@ -217,14 +203,12 @@ const updateTitle = async (req, res) => {
       data: updateTitle,
     });
   } catch (error) {
-    res.status(500).json({
-      message: "Server error : " + error.message,
-    });
+    next(error);
   }
 };
 
 // DELETE METHOD BLOGS
-const remove = async (req, res) => {
+const remove = async (req, res, next) => {
   try {
     const blog = req.body;
     let id = req.params.id;
@@ -244,7 +228,7 @@ const remove = async (req, res) => {
 
     // check if current blog is available
     const currentBlog = await Prisma.blog.findUnique({
-      where: { id },
+      where: { id: id },
       select: { id: true },
     });
 
@@ -263,9 +247,7 @@ const remove = async (req, res) => {
       message: `DELETE DATA WITH ID ${id} IS SUCCESSFUL`,
     });
   } catch (error) {
-    res.status(500).json({
-      message: "Server error : " + error.message,
-    });
+    next(error);
   }
 };
 
