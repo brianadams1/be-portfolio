@@ -1,6 +1,7 @@
 import { Prisma } from "../app/prisma.js";
 import { Validate } from "../app/validate.js";
 import Joi from "joi";
+import { isID } from "../validation/mainValidation.js";
 
 const blogsMessage = { message: "OK from Blogs Page", status: 200 };
 // GETALL METHOD BLOGS
@@ -22,10 +23,8 @@ const get = async (req, res, next) => {
   try {
     let id = req.params.id;
 
-    // START : JOI VALIDATE ID
-    const schema = Joi.number().positive().required().label("ID");
-    id = Validate(schema, id);
-    // END : JOI VALIDATE ID
+    //  VALIDATE ID
+    id = Validate(isID, id);
 
     // START: CHECK BLOG EXISTENCE
     const blog = await Prisma.blog.findUnique({
@@ -83,20 +82,8 @@ const put = async (req, res, next) => {
     let blog = req.body;
     let id = req.params.id;
 
-    // START: JOI VALIDATE ID
-    const schema = Joi.number().positive().min(1).required().label("ID");
-    id = Validate(schema, id);
-   
-    // const validate = schema.validate(id);
-
-    // if (validate.error) {
-    //   return res.status(400).json({
-    //     message: validate.error.message,
-    //   });
-    // }
-
-    // id = validate.value;
-    // END: JOI VALIDATE ID
+    //  VALIDATE ID
+    id = Validate(isID, id);
 
     // START : JOI VALIDATE BLOG
     // USING OBJECT VALIDATION
@@ -106,16 +93,7 @@ const put = async (req, res, next) => {
       content: Joi.string().min(3).required().label("Content"),
     });
     blog= Validate(schemaBlog, blog)
-    // const blogValidate = schemaBlog.validate(blog, {
-    //   abortEarly: false,
-    // });
-
-    // if (blogValidate.error) {
-    //   return res.status(400).json({
-    //     message: blogValidate.error.message,
-    //   });
-    // }
-    // blog = blogValidate.value;
+    
     // END : JOI VALIDATE BLOG
 
     // check if current blog is available
@@ -149,10 +127,8 @@ const updateTitle = async (req, res, next) => {
     let title = req.body.title;
     let id = req.params.id;
 
-    // START: JOI VALIDATE ID
-    const schema = Joi.number().positive().min(1).required().label("ID");
-    id = Validate(schema,id)
-    // END: JOI VALIDATE ID
+    // JOI VALIDATE ID
+    id = Validate(isID,id)
 
     // START : JOI VALIDATE BLOG
     // USING OBJECT VALIDATION
@@ -195,11 +171,9 @@ const remove = async (req, res, next) => {
     // const blog = req.body;
     let id = req.params.id;
 
-    // START: JOI VALIDATE ID
-    const schema = Joi.number().positive().min(1).required().label("ID");
-    id = Validate(schema, id);
+    // JOI VALIDATE ID
+    id = Validate(isID, id);
 
-    // END: JOI VALIDATE ID
 
     // check if current blog is available
     const currentBlog = await Prisma.blog.findUnique({
