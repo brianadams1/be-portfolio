@@ -9,7 +9,7 @@ export const logging = (req, res, next) => {
     protocol: req.protocol,
     body: req.body,
   };
-  console.info(log);
+  // console.info(log);
   // save to database
   console.log("===============================");
   console.log("Waiting to save log to database");
