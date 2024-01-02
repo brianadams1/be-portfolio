@@ -1,6 +1,7 @@
 import Joi from "joi";
+import {  isString255 } from "./mainValidation.js";
 
-const isBlogTitle =  Joi.string().trim().max(255).required().label("Title")
+const isBlogTitle = isString255.required().label("Title")
 const isBlogContent = Joi.string().min(3).required().label("Content")
 // OBJECT VALIDATION
 const isBlog = Joi.object({
