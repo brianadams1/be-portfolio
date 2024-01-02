@@ -1,7 +1,7 @@
 import { Prisma } from "../app/prisma.js";
 import { Validate } from "../app/validate.js";
-import Joi from "joi";
 import { isID } from "../validation/mainValidation.js";
+import { isBlog, isBlogTitle,  } from "../validation/blogValidation.js";
 
 const blogsMessage = { message: "OK from Blogs Page", status: 200 };
 // GETALL METHOD BLOGS
@@ -53,16 +53,9 @@ const post = async (req, res, next) => {
   try {
     let blog = req.body;
 
-    // START : JOI VALIDATE BLOG
-    // USING OBJECT VALIDATION
+    // JOI VALIDATE BLOG
+    blog = Validate(isBlog, blog);
 
-    const schemaBlog = Joi.object({
-      title: Joi.string().trim().max(255).required().label("Title"),
-      content: Joi.string().min(3).required().label("Content"),
-    });
-    blog = Validate(schemaBlog, blog);
-
-    // END : JOI VALIDATE BLOG
 
     const newBlog = await Prisma.blog.create({
       data: blog,
@@ -85,17 +78,9 @@ const put = async (req, res, next) => {
     //  VALIDATE ID
     id = Validate(isID, id);
 
-    // START : JOI VALIDATE BLOG
-    // USING OBJECT VALIDATION
-
-    const schemaBlog = Joi.object({
-      title: Joi.string().positive().trim().max(255).required().label("Title"),
-      content: Joi.string().min(3).required().label("Content"),
-    });
-    blog= Validate(schemaBlog, blog)
+    // JOI VALIDATE BLOG
+    blog= Validate(isBlog, blog)
     
-    // END : JOI VALIDATE BLOG
-
     // check if current blog is available
     const currentBlog = await Prisma.blog.findUnique({
       where: { id },
@@ -130,13 +115,8 @@ const updateTitle = async (req, res, next) => {
     // JOI VALIDATE ID
     id = Validate(isID,id)
 
-    // START : JOI VALIDATE BLOG
-    // USING OBJECT VALIDATION
-
-    const schemaTitle = Joi.string().trim().max(255).required().label("Title");
-
-    title = Validate(schemaTitle, title)
-    // END : JOI VALIDATE BLOG
+    // JOI VALIDATE TITLE
+    title = Validate(isBlogTitle, title)
 
     // check if current blog is available
     const currentBlog = await Prisma.blog.findUnique({
