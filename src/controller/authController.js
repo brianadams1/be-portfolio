@@ -1,19 +1,41 @@
-// import { Prisma } from "../app/prisma.js";
+import { Prisma } from "../app/prisma.js";
+import { Validate } from "../app/validate.js";
+import { ResponseError } from "../error/responseError.js";
+import { loginValidation } from "../validation/authValidation.js";
+import bcrypt from "bcrypt"
 
 // POST METHOD  LOGIN
+const login = async (req, res, next) => {
+  try {
+    // ambil data body ->email & password
+    let loginData = req.body;
+    loginData = Validate(loginValidation, loginData);
 
-const login = (req, res) => {
-  // const user = await prisma.user.findMany() >> should use async
-  console.info(user)
-  res.cookie("token", "askdjbajfdlajsda");
-  res.cookie("username", "troll1234");
-  res.cookie("location", "Jakarta");
+    const user = await Prisma.user.findUnique({
+      where: {
+        email: loginData.email,
+      },
+    });
+    if (!user) throw new ResponseError(400, `Email or password is invalid`);
+    //check password betul atau salah
+    const clientPassword = loginData.password
+    const dbPassword = user.password
+    const checkPassword = await bcrypt.compare(clientPassword, dbPassword)
 
-  res.status(200).json({
-    message: "Logged in",
-    user: user
-  });
-  
+    if(!checkPassword) throw new ResponseError(400, `Email or password is invalid`)
+
+    // const user = await prisma.user.findMany() >> should use async
+    res.cookie("token", "askdjbajfdlajsda");
+    res.cookie("username", "troll1234");
+    res.cookie("location", "Jakarta");
+
+    res.status(200).json({
+      message: "Logged in",
+      data: loginData,
+    });
+  } catch (error) {
+    next(error);
+  }
 };
 
 // DELETE METHOD LOGOUT
