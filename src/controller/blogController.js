@@ -2,6 +2,7 @@ import { Prisma } from "../app/prisma.js";
 import { Validate } from "../app/validate.js";
 import { isID } from "../validation/mainValidation.js";
 import { isBlog, isBlogTitle,  } from "../validation/blogValidation.js";
+import { ResponseError } from "../error/responseError.js";
 
 // GETALL METHOD BLOGS
 const getAll = async (req, res, next) => {
@@ -30,11 +31,8 @@ const get = async (req, res, next) => {
       where: { id },
     });
     // HANDLE NOT FOUND
-    if (blog == null) {
-      return res.status(404).json({
-        message: `NO DATA BLOG ${id}`,
-      });
-    }
+    if (blog == null) throw new ResponseError(404, `NO DATA BLOG ${id}`)
+    
     // HANDLE FOUND
     res.status(200).json({
       message: `SUCCESS GET BLOG DATA BY ID : ${id}`,
@@ -58,6 +56,7 @@ const post = async (req, res, next) => {
     const newBlog = await Prisma.blog.create({
       data: blog,
     });
+    
     res.status(200).json({
       message: "BERHASIL MENYIMPAN DATA BLOG BARU",
       data: newBlog,
@@ -85,12 +84,9 @@ const put = async (req, res, next) => {
       select: { id: true },
     });
 
-    if (!currentBlog) {
-      // 404 BLOG NOT FOUND
-      return res.status(404).json({
-        message: `Blog with ID ${id} is not found`,
-      });
-    }
+    if(!currentBlog) throw new ResponseError(404, `Blog with ID ${id} is not found`)
+    
+
     const update = await Prisma.blog.update({
       where: { id },
       data: blog,
@@ -122,12 +118,9 @@ const updateTitle = async (req, res, next) => {
       select: { id: true },
     });
 
-    if (!currentBlog) {
-      // 404 BLOG NOT FOUND
-      return res.status(404).json({
-        message: `Blog with ID ${id} is not found`,
-      });
-    }
+    if(!currentBlog) throw new ResponseError(404, `Blog with ID ${id} is not found`)
+    
+    
 
     // UPDATE TITLE EXECUTION
     const updateTitle = await Prisma.blog.update({
@@ -157,12 +150,8 @@ const remove = async (req, res, next) => {
       select: { id: true },
     });
 
-    if (!currentBlog) {
-      // 404 BLOG NOT FOUND
-      return res.status(404).json({
-        message: `Blog with ID ${id} is not found`,
-      });
-    }
+    if(!currentBlog) throw new ResponseError(404, `Blog with ID ${id} is not found`)
+    
 
     // DELETE EXECUTION
     const deleteBlog = await Prisma.blog.delete({
