@@ -1,19 +1,18 @@
-import { JoiError } from "../app/validate.js";
+import Joi from "joi";
 
 export const errorAgain = (err, req, res, next) => {
-    if (!err) {
+  if (!err) {
     return next();
   }
-  if (err instanceof JoiError) {
-    res
-      .status(err.status)
+  if (err instanceof Joi.ValidationError) {
+    return res
+      .status(400)
       .json({
         message: err.message,
       })
       .end();
-  } else {
-    res.status(500).json({
-      message: err.message,
-    });
   }
+  res.status(500).json({
+    message: err.message,
+  });
 };
