@@ -2,7 +2,8 @@ import { Prisma } from "../app/prisma.js";
 import { Validate } from "../app/validate.js";
 import { ResponseError } from "../error/responseError.js";
 import { loginValidation } from "../validation/authValidation.js";
-import bcrypt from "bcrypt"
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
 // POST METHOD  LOGIN
 const login = async (req, res, next) => {
@@ -11,27 +12,59 @@ const login = async (req, res, next) => {
     let loginData = req.body;
     loginData = Validate(loginValidation, loginData);
 
+    // check email betul atau salah
     const user = await Prisma.user.findUnique({
       where: {
         email: loginData.email,
       },
     });
+
+    // jika email salah
     if (!user) throw new ResponseError(400, `Email or password is invalid`);
+
     //check password betul atau salah
-    const clientPassword = loginData.password
-    const dbPassword = user.password
-    const checkPassword = await bcrypt.compare(clientPassword, dbPassword)
+    const clientPassword = loginData.password;
+    const dbPassword = user.password;
+    const checkPassword = await bcrypt.compare(clientPassword, dbPassword);
 
-    if(!checkPassword) throw new ResponseError(400, `Email or password is invalid`)
+    // jika password salah
+    if (!checkPassword)
+      throw new ResponseError(400, `Email or password is invalid`);
 
-    // const user = await prisma.user.findMany() >> should use async
-    res.cookie("token", "askdjbajfdlajsda");
-    res.cookie("username", "troll1234");
-    res.cookie("location", "Jakarta");
+    // jika email dan password benar
+    const jwtSecret = "BASECOOKIEFROMWEBSITE";
+    const maxAge = 24 * 3600;
+    let token = jwt.sign(
+      {
+        email: user.email,
+      },
+      jwtSecret,
+      {
+        expiresIn: maxAge,
+      }
+    );
+    // PUT TOKEN
+    res.cookie("token", token);
+
+    // SEND USER-NEED DATA, put token
+    const data = await Prisma.user.update({
+      where: {
+        email: loginData.email,
+      },
+      data: {
+        token: token,
+      },
+      select: {
+        name: true,
+        email: true,
+      },
+    });
 
     res.status(200).json({
       message: "Logged in",
-      data: loginData,
+      data: data,
+      checkPassword: checkPassword,
+      token: token,
     });
   } catch (error) {
     next(error);
