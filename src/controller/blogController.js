@@ -86,7 +86,6 @@ const put = async (req, res, next) => {
 
     if(!currentBlog) throw new ResponseError(404, `Blog with ID ${id} is not found`)
     
-
     const update = await Prisma.blog.update({
       where: { id },
       data: blog,
@@ -152,7 +151,6 @@ const remove = async (req, res, next) => {
 
     if(!currentBlog) throw new ResponseError(404, `Blog with ID ${id} is not found`)
     
-
     // DELETE EXECUTION
     const deleteBlog = await Prisma.blog.delete({
       where: { id },

@@ -1,5 +1,6 @@
 import { Prisma } from "../app/prisma.js";
 import { Validate } from "../app/validate.js";
+import { ResponseError } from "../error/responseError.js";
 import { isEducation } from "../validation/educationValidation.js";
 import { isID } from "../validation/mainValidation.js";
 
@@ -26,11 +27,9 @@ const get = async (req, res, next) => {
       where: { id },
     });
 
-    if (education == null) {
-      return res.status(404).json({
-        message: `NO DATA EDUCATION : ${id}`,
-      });
-    }
+    if (education == null)
+      throw new ResponseError(404, `NO DATA EDUCATION : ${id}`);
+
     res.status(200).json({
       message: `SUCCESS GET EDUCATION DATA BY ID :  ${id}`,
       data: education,
@@ -72,15 +71,14 @@ const put = async (req, res, next) => {
       select: { id: true },
     });
 
-    if (!currentEducation) {
-      return res.status(404).json({
-        message: `EDUCATION WITH ID ${id} IS NOT FOUND`,
-      });
-    }
+    if (!currentEducation)
+      throw new ResponseError(404, `EDUCATION WITH ID ${id} IS NOT FOUND`);
+
     const update = await Prisma.education.update({
       where: { id },
       data: education,
     });
+
     res.status(200).json({
       message: "SUCCESS REPLACE ALL EDUCATION DATA",
     });
@@ -103,12 +101,9 @@ const remove = async (req, res, next) => {
       select: { id: true },
     });
 
-    if (!currentEducation) {
-      // 404 BLOG NOT FOUND
-      return res.status(404).json({
-        message: `Education with ID ${id} is not found`,
-      });
-    }
+    // 404 BLOG NOT FOUND
+    if (!currentEducation)
+      throw new ResponseError(404, `Education with ID ${id} is not found`);
 
     // DELETE EXECUTION
     const deleteBlog = await Prisma.blog.delete({
