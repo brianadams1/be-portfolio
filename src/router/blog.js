@@ -1,8 +1,7 @@
-import express from "express";
+import express, { Router } from "express";
 import blogController from "../controller/blogController.js";
 
 const routerBlogs = express.Router();
-
 
 // SAVE NEW BLOG
 routerBlogs.post('/blog',blogController.post);

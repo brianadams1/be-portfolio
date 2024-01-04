@@ -25,8 +25,28 @@ app.use(logging);
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ PAGE_PATHING START ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+
 // PUBLIC API (WITHOUT LOGIN)
 app.use(routerPublic)
+
+// MIDDLEWARE FOR AUTHENTICATION
+app.use((req, res, next)=>{
+  console.info("enter route blog middleware>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
+  // CHECK COOKIE TOKEN
+  const token = req.cookies.token;
+  // IF NO TOKEN, RETURN 401 UNAUTHORIZED
+  if(!token) return res.status(401).json({message:"Unauthorized. You must login first."})
+  console.log(token)
+
+  // CHECK TOKEN OWNER
+  // CHECK IS TOKEN VERIFY
+  // IF OK, NEXT
+  next()
+  // IF NOT, RETURN 401 UNAUTHORIZED
+
+})
+
+// ROUTER BERIKUTNYA AKAN CHECK AUTHENTICATION
 
 // ------------ HOME -------------- (now useless)
 
@@ -60,6 +80,7 @@ app.use(routerSkill);
 // ---------- LOGIN & LOGOUT -----------
 
 app.use(routerAuth);
+
 
 // ------------- 404 MIDDLEWARE -----------------
 
