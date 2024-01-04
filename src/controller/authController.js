@@ -4,6 +4,8 @@ import { ResponseError } from "../error/responseError.js";
 import { loginValidation } from "../validation/authValidation.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
+dotenv.config();
 
 // POST METHOD  LOGIN
 const login = async (req, res, next) => {
@@ -75,16 +77,15 @@ const login = async (req, res, next) => {
 
 const logout = (req, res) => {
   try {
-    
     res.clearCookie("token");
     res.clearCookie("username");
     res.clearCookie("location");
-  
+
     res.status(200).json({
       message: "Cookies cleared",
     });
   } catch (error) {
-    next()
+    next();
   }
 };
 

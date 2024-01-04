@@ -1,5 +1,7 @@
 import jwt from "jsonwebtoken";
 import { Prisma } from "../app/prisma.js";
+import dotenv from "dotenv";
+dotenv.config();
 
 export const authMiddleware = async (req, res, next) => {
   try {
