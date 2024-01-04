@@ -3,8 +3,8 @@ import { Validate } from "../app/validate.js";
 import { ResponseError } from "../error/responseError.js";
 import { loginValidation } from "../validation/authValidation.js";
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
+import authService from "../service/authService.js";
 dotenv.config();
 
 // POST METHOD  LOGIN
@@ -33,34 +33,13 @@ const login = async (req, res, next) => {
     if (!checkPassword)
       throw new ResponseError(400, `Email or password is invalid`);
 
+      const email = user.email
     // jika email dan password benar
-    const jwtSecret = process.env.JWT_SECRET;
-    const maxAge = 3600;
-    let token = jwt.sign(
-      {
-        email: user.email,
-      },
-      jwtSecret,
-      {
-        expiresIn: maxAge,
-      }
-    );
-    // PUT TOKEN
-    res.cookie("token", token);
-
+    // // create token, res param to use in token service
+    const token = authService.createToken(res, email)
+    
     // SEND USER-NEED DATA, put token
-    const data = await Prisma.user.update({
-      where: {
-        email: loginData.email,
-      },
-      data: {
-        token: token,
-      },
-      select: {
-        name: true,
-        email: true,
-      },
-    });
+    const data = await authService.updateUserToken(email, token)
 
     res.status(200).json({
       message: "Logged in",

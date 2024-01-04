@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken";
 import { Prisma } from "../app/prisma.js";
 import dotenv from "dotenv";
+import authService from "../service/authService.js";
 dotenv.config();
 
 export const authMiddleware = async (req, res, next) => {
@@ -28,26 +29,18 @@ export const authMiddleware = async (req, res, next) => {
 
     // IF JWT ERROR, THROW ERROR AUTOMATICALLY
     jwt.verify(token, jwtSecret);
-
+    const email = user.email;
     // RENEW TOKEN
-    const maxAge = 3600;
-    var newToken = jwt.sign({ email: user.email }, jwtSecret, {
-      expiresIn: maxAge,
-    });
+    // // create token, res param to use in token service
+    const newToken = authService.createToken(res, email);
 
-    // INSERT DATA USER TO REQUEST
-    req.user = user;
-
+    
     // RENEW TOKEN TO DB USER
-    await Prisma.user.update({
-      where: { email: user.email },
-      data: {
-        token: newToken,
-      },
-    });
+    
+    const dataUser = await authService.updateUserToken(email, newToken);
 
-    // SEND NEW COOKIE TO CLIENT/BROWSER
-    res.cookie("token", newToken);
+    // INSERT NEW DATA USER TO REQUEST
+    req.user = dataUser;
 
     // IF OK, NEXT
     next();
