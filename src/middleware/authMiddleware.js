@@ -22,7 +22,7 @@ export const authMiddleware = async (req, res, next) => {
     }
 
     // USER FOUND, CHECK IS TOKEN VERIFY USING JWT
-    const jwtSecret = "BASECOOKIEFROMWEBSITE";
+    const jwtSecret = process.env.JWT_SECRET;
 
     // IF JWT ERROR, THROW ERROR AUTOMATICALLY
     jwt.verify(token, jwtSecret);

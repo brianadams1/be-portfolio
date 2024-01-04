@@ -32,7 +32,7 @@ const login = async (req, res, next) => {
       throw new ResponseError(400, `Email or password is invalid`);
 
     // jika email dan password benar
-    const jwtSecret = "BASECOOKIEFROMWEBSITE";
+    const jwtSecret = process.env.JWT_SECRET;
     const maxAge = 3600;
     let token = jwt.sign(
       {
