@@ -35,6 +35,10 @@ export const authMiddleware = async (req, res, next) => {
       expiresIn: maxAge,
     });
 
+    // INSERT DATA USER TO REQUEST
+    req.user = user;
+
+    // RENEW TOKEN TO DB USER
     await Prisma.user.update({
       where: { email: user.email },
       data: {
