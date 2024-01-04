@@ -11,6 +11,7 @@ import { routerAuth } from "./src/router/auth.js";
 import { notFound } from "./src/middleware/notfound.js";
 import { logging } from "./src/middleware/logging.js";
 import { errorAgain } from "./src/middleware/error.js";
+import { routerPublic } from "./src/router/public.js";
 
 const app = express();
 
@@ -24,6 +25,8 @@ app.use(logging);
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ PAGE_PATHING START ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+// PUBLIC API (WITHOUT LOGIN)
+app.use(routerPublic)
 
 // ------------ HOME -------------- (now useless)
 
