@@ -12,6 +12,8 @@ import { notFound } from "./src/middleware/notfound.js";
 import { logging } from "./src/middleware/logging.js";
 import { errorAgain } from "./src/middleware/error.js";
 import { routerPublic } from "./src/router/public.js";
+import { Prisma } from "./src/app/prisma.js";
+import jwt from "jsonwebtoken";
 
 const app = express();
 
@@ -25,26 +27,44 @@ app.use(logging);
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ PAGE_PATHING START ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-
 // PUBLIC API (WITHOUT LOGIN)
-app.use(routerPublic)
+app.use(routerPublic);
 
 // MIDDLEWARE FOR AUTHENTICATION
-app.use((req, res, next)=>{
-  console.info("enter route blog middleware>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
-  // CHECK COOKIE TOKEN
-  const token = req.cookies.token;
-  // IF NO TOKEN, RETURN 401 UNAUTHORIZED
-  if(!token) return res.status(401).json({message:"Unauthorized. You must login first."})
-  console.log(token)
+app.use(async (req, res, next) => {
+  try {
+    // CHECK COOKIE TOKEN
+    const token = req.cookies.token;
+    // IF NO TOKEN, RETURN 401 UNAUTHORIZED
+    if (!token) throw new Error();
 
-  // CHECK TOKEN OWNER
-  // CHECK IS TOKEN VERIFY
-  // IF OK, NEXT
-  next()
-  // IF NOT, RETURN 401 UNAUTHORIZED
+    // CHECK TOKEN OWNER
+    const user = await Prisma.user.findFirst({
+      where: { token },
+      select: { name: true, email: true, token: true },
+    });
 
-})
+    // IF USER NOT FOUND, CLEAR COOKIE AND RETURN 401 UNAUTHORIZED
+    if (!user) {
+      res.clearCookie("token");
+      throw new Error();
+    }
+
+    // USER FOUND, CHECK IS TOKEN VERIFY USING JWT
+    const jwtSecret = "BASECOOKIEFROMWEBSITE";
+
+    // IF JWT ERROR, THROW ERROR AUTOMATICALLY
+    jwt.verify(token, jwtSecret);
+
+    // IF OK, NEXT
+    next();
+  } catch (error) {
+    // IF NOT, RETURN 401 UNAUTHORIZED
+    return res.status(401).json({
+      message: "Unauthorized. You must login first",
+    });
+  }
+});
 
 // ROUTER BERIKUTNYA AKAN CHECK AUTHENTICATION
 
@@ -80,7 +100,6 @@ app.use(routerSkill);
 // ---------- LOGIN & LOGOUT -----------
 
 app.use(routerAuth);
-
 
 // ------------- 404 MIDDLEWARE -----------------
 
