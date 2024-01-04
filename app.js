@@ -8,7 +8,7 @@ import { routerBlogs } from "./src/router/blog.js";
 import { routerProject } from "./src/router/project.js";
 import { routerSkill } from "./src/router/skill.js";
 import { routerAuth } from "./src/router/auth.js";
-import { notFound } from "./src/router/notfound.js";
+import { notFound } from "./src/middleware/notfound.js";
 import { logging } from "./src/middleware/logging.js";
 import { errorAgain } from "./src/middleware/error.js";
 
@@ -24,9 +24,10 @@ app.use(logging);
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ PAGE_PATHING START ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-const homeMessage = { message: "OK from Home page", status: 200 };
 
 // ------------ HOME -------------- (now useless)
+
+// const homeMessage = { message: "OK from Home page", status: 200 };
 
 // GET METHOD HOME
 // app.get("/", (req, res) => {
