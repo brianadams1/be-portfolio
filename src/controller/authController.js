@@ -33,7 +33,7 @@ const login = async (req, res, next) => {
 
     // jika email dan password benar
     const jwtSecret = "BASECOOKIEFROMWEBSITE";
-    const maxAge = 24 * 3600;
+    const maxAge = 3600;
     let token = jwt.sign(
       {
         email: user.email,
@@ -74,13 +74,18 @@ const login = async (req, res, next) => {
 // DELETE METHOD LOGOUT
 
 const logout = (req, res) => {
-  res.clearCookie("token");
-  res.clearCookie("username");
-  res.clearCookie("location");
-
-  res.status(200).json({
-    message: "Cookies cleared",
-  });
+  try {
+    
+    res.clearCookie("token");
+    res.clearCookie("username");
+    res.clearCookie("location");
+  
+    res.status(200).json({
+      message: "Cookies cleared",
+    });
+  } catch (error) {
+    next()
+  }
 };
 
 export default { login, logout };
