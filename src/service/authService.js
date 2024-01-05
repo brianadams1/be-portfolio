@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
+import { Prisma } from "../app/prisma.js";
 dotenv.config();
 
 const createToken = (res, email) => {

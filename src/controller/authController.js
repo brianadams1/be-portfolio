@@ -22,7 +22,8 @@ const login = async (req, res, next) => {
     });
 
     // jika email salah
-    if (!user) throw new ResponseError(400, `Email or password is invalid`);
+    if (!user) throw new ResponseError(400
+      , `Email or password is invalid`);
 
     //check password betul atau salah
     const clientPassword = loginData.password;
@@ -33,13 +34,13 @@ const login = async (req, res, next) => {
     if (!checkPassword)
       throw new ResponseError(400, `Email or password is invalid`);
 
-      const email = user.email
+    const email = user.email;
     // jika email dan password benar
     // // create token, res param to use in token service
-    const token = authService.createToken(res, email)
-    
+    const token = authService.createToken(res, email);
+
     // SEND USER-NEED DATA, put token
-    const data = await authService.updateUserToken(email, token)
+    const data = await authService.updateUserToken(email, token);
 
     res.status(200).json({
       message: "Logged in",
