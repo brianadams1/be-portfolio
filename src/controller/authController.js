@@ -22,8 +22,7 @@ const login = async (req, res, next) => {
     });
 
     // jika email salah
-    if (!user) throw new ResponseError(400
-      , `Email or password is invalid`);
+    if (!user) throw new ResponseError(400, `Email or password is invalid`);
 
     //check password betul atau salah
     const clientPassword = loginData.password;
@@ -55,17 +54,34 @@ const login = async (req, res, next) => {
 
 // DELETE METHOD LOGOUT
 
-const logout = (req, res) => {
+const logout = async (req, res) => {
   try {
-    res.clearCookie("token");
-    res.clearCookie("username");
-    res.clearCookie("location");
+    // UPDATE USER DATA, AND TOKEN IS NULLED
+    const user = req.user;
+    const email = user.email;
 
+    await Prisma.user.update({
+      where: {
+        email: user.email,
+      },
+      data: {
+        token: null,
+      },
+      select: {
+        email: true,
+      },
+    });
+
+    // CREATE 1 SEC TOKEN
+    authService.createToken(res, email, "1s");
+    // RESET COOKIE
+    res.clearCookie("token");
+    // SEND DATA SUCCESS
     res.status(200).json({
-      message: "Cookies cleared",
+      message: "SUCCESS LOGOUT",
     });
   } catch (error) {
-    next();
+    next(error);
   }
 };
 
