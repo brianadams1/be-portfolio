@@ -95,14 +95,14 @@ const remove = async (req, res, next) => {
     // JOI VALIDATE ID
     id = Validate(isID, id);
 
-    // check if current blog is available
-    const currentEducation = await Prisma.education.findUnique({
+    // check if CERTAIN blog is available
+    const certainEducation = await Prisma.education.findUnique({
       where: { id },
       select: { id: true },
     });
 
     // 404 BLOG NOT FOUND
-    if (!currentEducation)
+    if (!certainEducation)
       throw new ResponseError(404, `Education with ID ${id} is not found`);
 
     // DELETE EXECUTION
