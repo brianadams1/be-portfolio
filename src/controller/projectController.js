@@ -1,12 +1,33 @@
 const projectsMessage = { message: "OK from Projects Page", status: 200 };
 
+// GET ALL METHOD
+const getAll = (req, res, next) => {
+  try {
+    
+    res.status(200).json(projectsMessage);
+  } catch (error) {
+    next(error)
+  }
+};
+
+
 // GET METHOD PROJECTS
 const get = (req, res) => {
-  res.status(200).json(projectsMessage);
+  try {
+    
+    res.status(200).json(projectsMessage);
+  } catch (error) {
+    next(error)
+  }
 };
 
 // POST METHOD  PROJECTS
 const post = (req, res) => {
+  try {
+    
+  } catch (error) {
+    next(error)
+  }
   res.status(200).json(projectsMessage);
 };
 
@@ -15,10 +36,6 @@ const put = (req, res) => {
   res.status(200).json(projectsMessage);
 };
 
-// PATCH METHOD PROJECTS
-const patch = (req, res) => {
-  res.status(200).json(projectsMessage);
-};
 
 // DELETE METHOD PROJECTS
 const remove = (req, res) => {
@@ -26,9 +43,9 @@ const remove = (req, res) => {
 };
 
 export default {
+  getAll,
   get,
   post,
   put,
-  patch,
   remove,
 };

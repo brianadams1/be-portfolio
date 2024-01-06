@@ -1,17 +1,12 @@
 import express from "express";
 import projectController from "../controller/projectController.js";
 
-const routerProject = express.Router();
+export const routerProject = express.Router();
 
 routerProject
-  .route("/projects")
-  .get(projectController.get)
-  .post(projectController.post);
+  .post("/project",projectController.post);
 
 routerProject
   .route("/projects/:id")
   .put(projectController.put)
-  .patch(projectController.patch)
   .delete(projectController.remove);
-
-export { routerProject };
