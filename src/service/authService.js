@@ -33,7 +33,6 @@ const updateUserToken = async (email, token) => {
     select: {
       name: true,
       email: true,
-      token: true,
     },
   });
   return user;
