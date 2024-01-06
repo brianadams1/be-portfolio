@@ -11,24 +11,10 @@ const get = (req, res) => {
   res.status(200).json(data);
 };
 
-// POST METHOD  PROFILE
-const post = (req, res) => {
-  res.status(200).json(profileMessage);
-};
-
 // PUT METHOD PROFILE
 const put = (req, res) => {
   res.status(200).json(profileMessage);
 };
 
-// PATCH METHOD PROFILE
-const patch = (req, res) => {
-  res.status(200).json(profileMessage);
-};
 
-// DELETE METHOD PROFILE
-const remove = (req, res) => {
-  res.status(200).json(profileMessage);
-};
-
-export default { get, post, put, patch, remove };
+export default { get, put};
