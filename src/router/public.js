@@ -32,7 +32,7 @@ routerPublic.get("/profile", profileController.get)
 // GET ALL
 routerPublic.get("/projects", projectController.getAll)
 // GET BY ID
-routerPublic.get("/project/id", projectController.get)
+routerPublic.get("/project/:id", projectController.get)
 
 
 // SKILL ========================

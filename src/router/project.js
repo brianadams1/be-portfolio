@@ -7,6 +7,6 @@ routerProject
   .post("/project",projectController.post);
 
 routerProject
-  .route("/projects/:id")
+  .route("/project/:id")
   .put(projectController.put)
   .delete(projectController.remove);

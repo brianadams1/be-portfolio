@@ -2,14 +2,17 @@ import { Prisma } from "../app/prisma.js";
 import { Validate } from "../app/validate.js";
 import { isID } from "../validation/mainValidation.js";
 import { ResponseError } from "../error/responseError.js";
+import { isProject } from "../validation/projectValidation.js";
 
 // GET ALL METHOD
 const getAll = async (req, res, next) => {
   try {
-    let project = await Prisma.project.findMany();
+    // FIND ALL PROJECTS
+    let projects = await Prisma.project.findMany();
 
     res.status(200).json({
       message: "SUCCESS GET ALL PROJECTS DATA",
+      data: projects,
     });
   } catch (error) {
     next(error);
@@ -19,17 +22,21 @@ const getAll = async (req, res, next) => {
 // GET METHOD PROJECTS
 const get = async (req, res, next) => {
   try {
+    // CHECK ID AND VALIDATE
     let id = req.params.id;
     id = Validate(isID, id);
 
+    // FIND PROJECT BY ID
     let project = await Prisma.project.findUnique({
       where: { id },
     });
 
-    if(!project) throw new ResponseError(404,`PROJECT ${id} IS NOT FOUND`)
+    // IF WANTED PROJECT IS NOT FOUND, THROW ERROR
+    if (!project) throw new ResponseError(404, `PROJECT ${id} IS NOT FOUND`);
 
     res.status(200).json({
       message: "SUCCESS GET PROJECT DATA BY ID",
+      data: project,
     });
   } catch (error) {
     next(error);
@@ -40,9 +47,20 @@ const get = async (req, res, next) => {
 const post = async (req, res, next) => {
   try {
     // GET PROJECT INPUT DATA
-    let datas = req.body;
+    let project = req.body;
+
+    // VALIDATE
+    project = Validate(isProject, project);
+
+    // POST THE DATAS
+    let newProject = await Prisma.project.create({
+      data: project,
+    });
+
+    // IF SUCCESS
     res.status(200).json({
       message: "SUCCESS POST NEW PROJECT",
+      data: newProject,
     });
   } catch (error) {
     next(error);
@@ -52,9 +70,33 @@ const post = async (req, res, next) => {
 // PUT METHOD PROJECTS
 const put = async (req, res, next) => {
   try {
-    let datas = req.body;
+    // GET ID AND VALIDATE
+    let id = req.params.id;
+    id = Validate(isID, id);
+
+    // GET PROJECT FROM DATABASE AND VALIDATE
+    let project = req.body;
+    project = Validate(isProject, project);
+
+    // SEARCH WANTED PROJECT
+    let currentProject = await Prisma.project.findUnique({
+      where: { id },
+      select: { id: true },
+    });
+
+    // IF PROJECT IS UNAVAILABLE
+    if (!currentProject)
+      throw new ResponseError(404, `PROJECT ${id} IS NOT FOUND`);
+
+    // UPDATE THE PROJECT
+    const update = await Prisma.project.update({
+      where: { id },
+      data: project,
+    });
+
     res.status(200).json({
       message: "SUCCESS UPDATE PROJECT DATA BY ID",
+      data: project,
     });
   } catch (error) {
     next(error);
@@ -64,10 +106,26 @@ const put = async (req, res, next) => {
 // DELETE METHOD PROJECTS
 const remove = async (req, res, next) => {
   try {
-    let project = await Prisma.project.findUnique();
+    // GET ID FROM REQUEST AND VALIDATE
+    let id = req.params.id;
+    id = Validate(isID, id);
+
+    // CHECK IF CERTAIN PROJECT IS EXIST
+    let project = await Prisma.project.findUnique({
+      where: { id },
+      select: { id: true },
+    });
+
+    // IF THE PROJECT IS NOT FOUND
+    if (!project) throw new ResponseError(404, `Project ${id} is not found`);
+
+    // IF FOUND, DELETE EXECUTION
+    const deleteProject = await Prisma.blog.delete({
+      where: { id },
+    });
 
     res.status(200).json({
-      message: "SUCCESS DELETE PROJECT DATA BY ID",
+      message: "SUCCESS DELETE PROJECT DATA BY ID " + id,
     });
   } catch (error) {
     next(error);
