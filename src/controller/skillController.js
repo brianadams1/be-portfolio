@@ -1,6 +1,7 @@
 import { Prisma } from "../app/prisma.js";
 import { Validate } from "../app/validate.js";
 import { ResponseError } from "../error/responseError.js";
+import skillService from "../service/skillService.js";
 import { isID } from "../validation/mainValidation.js";
 import { isSkill } from "../validation/skillValidation.js";
 
@@ -37,62 +38,47 @@ const post = async (req, res, next) => {
     skill = Validate(isSkill, skill);
 
     // TAKE CATEGORY ID => FIND OR CREATE
-    const id_category = await find_or_create_skill_category(skill.category)
+    const id_category = await skillService.find_or_create_skill_category(skill.category)
 
-// CREATE NEW SKILL
+    // CREATE NEW SKILL
     const insertSkill = {
       title: skill.title,
-      skillCategoryId: id_category
-    }
+      skillCategoryId: id_category,
+    };
 
-    const dataSkill = await Prisma.skill.create({data: insertSkill})
+    const dataSkill = await Prisma.skill.create({ data: insertSkill });
 
     res.status(200).json({
       message: "SUCCESS CREATE NEW SKILL",
-      data: dataSkill
+      data: dataSkill,
     });
   } catch (error) {
     next(error);
   }
 };
 
-// FIND / CREATE SKILL CATEGORY ID
-const find_or_create_skill_category = async(title)=>{
-  // FIND CATEGORY
-  const category = await Prisma.skillCategory.findFirst({
-    where: {title : title}
-  })
 
-  // IF EXIST, RETURN ITS ID
-  if(category) return category.id
-
-  // IF NOT, CREATE NEW
-  const newCategory = await Prisma.skillCategory.create({
-    data:{ title}
-  })
-  // RETURN THE ID
-  return newCategory.id
-}
 
 // PUT METHOD SKILLS
-const put = (req, res) => {
-  res.status(200).json({
-    message: "",
-  });
-};
-
-// PATCH METHOD SKILLS
-const patch = (req, res) => {
-  res.status(200).json({
-    message: "",
-  });
+const put = (req, res, next) => {
+  try {
+    res.status(200).json({
+      message: "",
+    });
+  } catch (error) {
+    next(error);
+  }
 };
 
 // DELETE METHOD SKILLS
-const remove = (req, res) => {
-  res.status(200).json({
-    message: "",
-  });
+const remove = (req, res, next) => {
+  try {
+    res.status(200).json({
+      message: "",
+    });
+  } catch (error) {
+    next(error);
+  }
 };
 
 export default {
