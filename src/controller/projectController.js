@@ -125,7 +125,7 @@ const remove = async (req, res, next) => {
     });
 
     res.status(200).json({
-      message: "SUCCESS DELETE PROJECT DATA BY ID " + id,
+      message: "SUCCESS DELETE PROJECT DATA BY ID =" + id,
     });
   } catch (error) {
     next(error);
