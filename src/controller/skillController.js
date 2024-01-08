@@ -127,6 +127,7 @@ const remove = async (req, res, next) => {
       where: { id },
       select: {
         id: true,
+        skillCategoryId: true
       },
     });
 
@@ -138,6 +139,10 @@ const remove = async (req, res, next) => {
     const deleteSkill = await Prisma.skill.delete({
       where: { id },
     });
+
+    // REMOVE CATEGORY IF EMPTY USING PREVIOUS ID FROM DB
+    const previousSkillId = certainSkill.skillCategoryId;
+    await skillService.remove_category(previousSkillId);
 
     res.status(200).json({
       message: "DELETE DATA SUCCESS WITH ID = " + id,
