@@ -7,7 +7,11 @@ import { isSkill } from "../validation/skillValidation.js";
 
 // GET METHOD SKILLS
 const getAll = async (req, res) => {
-  const data = await Prisma.skill.findMany();
+  const data = await Prisma.skill.findMany({
+    include: {
+      category: true,
+    },
+  });
   res.status(200).json({
     message: "SUCCESS GET ALL SKILL DATAS",
     data: data,
@@ -38,7 +42,9 @@ const post = async (req, res, next) => {
     skill = Validate(isSkill, skill);
 
     // TAKE CATEGORY ID => FIND OR CREATE
-    const id_category = await skillService.find_or_create_skill_category(skill.category)
+    const id_category = await skillService.find_or_create_skill_category(
+      skill.category
+    );
 
     // CREATE NEW SKILL
     const insertSkill = {
@@ -56,8 +62,6 @@ const post = async (req, res, next) => {
     next(error);
   }
 };
-
-
 
 // PUT METHOD SKILLS
 const put = (req, res, next) => {
@@ -86,6 +90,5 @@ export default {
   get,
   post,
   put,
-  patch,
   remove,
 };
