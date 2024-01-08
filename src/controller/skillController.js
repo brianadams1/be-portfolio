@@ -78,7 +78,7 @@ const put = async (req, res, next) => {
     // SEARCH THE CERTAIN SKILL USING ID
     const currentSkill = await Prisma.skill.findUnique({
       where: { id },
-      select: { id: true },
+      select: { id: true, skillCategoryId: true },
     });
 
     // IF ERROR, THROW 404
@@ -101,6 +101,10 @@ const put = async (req, res, next) => {
       where: { id },
       data: update_skill,
     });
+
+    // REMOVE CATEGORY IF EMPTY USING PREVIOUS ID FROM DB
+    const previousSkillId = currentSkill.skillCategoryId;
+    await skillService.remove_category(previousSkillId);
 
     res.status(200).json({
       message: "SUCCESS UPDATE SKILL",
@@ -126,9 +130,11 @@ const remove = async (req, res, next) => {
       },
     });
 
+    // IF CERTAIN SKILL IS NOT EXIST
     if (!certainSkill)
       throw new ResponseError(404, `SKILL WITH ID ${id} IS NOT FOUOND`);
 
+    // IF EXIST, DELETE EXECUTION
     const deleteSkill = await Prisma.skill.delete({
       where: { id },
     });
