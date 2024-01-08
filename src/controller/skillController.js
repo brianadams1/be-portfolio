@@ -67,10 +67,34 @@ const post = async (req, res, next) => {
 };
 
 // PUT METHOD SKILLS
-const put = (req, res, next) => {
+const put = async (req, res, next) => {
   try {
+    let skill = req.body
+    let id = req.params.id
+    skill = Validate(isSkill, skill)
+    id = Validate(isID, id)
+
+    const currentSkill = await Prisma.skill.findUnique({
+      where: {id},
+      select:{id:true}
+    })
+    if(!currentSkill) throw new ResponseError(404, `SKILL WITH ID ${id} IS NOT FOUND`)
+
+    const categoryId = await skillService.find_or_create_skill_category(skill.category)
+
+    const update_skill = {
+      title: skill.title,
+      skillCategoryId: categoryId
+    }
+    
+    const updatedSkill = await Prisma.skill.update({
+      where:{id},
+      data: update_skill
+    })
+
     res.status(200).json({
-      message: "",
+      message: "SUCCESS UPDATE SKILL",
+      data: updatedSkill
     });
   } catch (error) {
     next(error);

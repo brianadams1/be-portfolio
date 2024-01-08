@@ -6,6 +6,6 @@ export const routerSkill = express.Router();
 routerSkill.post("/skill", skillController.post);
 
 routerSkill
-  .route("/skills/:id")
+  .route("/skill/:id")
   .put(skillController.put)
   .delete(skillController.remove);
