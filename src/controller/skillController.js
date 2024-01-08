@@ -25,12 +25,12 @@ const get = async (req, res, next) => {
     id = Validate(isID, id);
     let skill = await Prisma.skill.findUnique({
       where: { id },
-      include: {category:true}
+      include: { category: true },
     });
     if (!skill) throw new ResponseError(404, `NO SKILL DATA: ${id}`);
     res.status(200).json({
       message: "SUCCESS GET DATA SKILL",
-      data: skill
+      data: skill,
     });
   } catch (error) {
     next(error);
@@ -69,32 +69,42 @@ const post = async (req, res, next) => {
 // PUT METHOD SKILLS
 const put = async (req, res, next) => {
   try {
-    let skill = req.body
-    let id = req.params.id
-    skill = Validate(isSkill, skill)
-    id = Validate(isID, id)
+    // GET DATA FROM INPUT AND VALIDATE
+    let skill = req.body;
+    let id = req.params.id;
+    skill = Validate(isSkill, skill);
+    id = Validate(isID, id);
 
+    // SEARCH THE CERTAIN SKILL USING ID
     const currentSkill = await Prisma.skill.findUnique({
-      where: {id},
-      select:{id:true}
-    })
-    if(!currentSkill) throw new ResponseError(404, `SKILL WITH ID ${id} IS NOT FOUND`)
+      where: { id },
+      select: { id: true },
+    });
 
-    const categoryId = await skillService.find_or_create_skill_category(skill.category)
+    // IF ERROR, THROW 404
+    if (!currentSkill)
+      throw new ResponseError(404, `SKILL WITH ID ${id} IS NOT FOUND`);
 
+    // FIND THE CATEGORY ID FROM SERVICE
+    const categoryId = await skillService.find_or_create_skill_category(
+      skill.category
+    );
+
+    // OBJECTING
     const update_skill = {
       title: skill.title,
-      skillCategoryId: categoryId
-    }
-    
+      skillCategoryId: categoryId,
+    };
+
+    // UPDATE EXECUTION
     const updatedSkill = await Prisma.skill.update({
-      where:{id},
-      data: update_skill
-    })
+      where: { id },
+      data: update_skill,
+    });
 
     res.status(200).json({
       message: "SUCCESS UPDATE SKILL",
-      data: updatedSkill
+      data: updatedSkill,
     });
   } catch (error) {
     next(error);
@@ -102,10 +112,29 @@ const put = async (req, res, next) => {
 };
 
 // DELETE METHOD SKILLS
-const remove = (req, res, next) => {
+const remove = async (req, res, next) => {
   try {
+    // GET DATA BY ID AND VALIDATE
+    let id = req.params.id;
+    id = Validate(isID, id);
+
+    // CHECK CERTAIN SKILL
+    const certainSkill = await Prisma.skill.findUnique({
+      where: { id },
+      select: {
+        id: true,
+      },
+    });
+
+    if (!certainSkill)
+      throw new ResponseError(404, `SKILL WITH ID ${id} IS NOT FOUOND`);
+
+    const deleteSkill = await Prisma.skill.delete({
+      where: { id },
+    });
+
     res.status(200).json({
-      message: "",
+      message: "DELETE DATA SUCCESS WITH ID = " + id,
     });
   } catch (error) {
     next(error);
