@@ -18,23 +18,26 @@ const getAll = async (req, res) => {
   });
 };
 
+// GET SKILL BY ID
 const get = async (req, res, next) => {
   try {
     let id = req.params.id;
     id = Validate(isID, id);
     let skill = await Prisma.skill.findUnique({
       where: { id },
+      include: {category:true}
     });
     if (!skill) throw new ResponseError(404, `NO SKILL DATA: ${id}`);
     res.status(200).json({
-      message: "",
+      message: "SUCCESS GET DATA SKILL",
+      data: skill
     });
   } catch (error) {
     next(error);
   }
 };
 
-// POST METHOD SKILLS
+// POST METHOD SKILL
 const post = async (req, res, next) => {
   try {
     // TAKE DATA FROM INPUT AND VALIDATE
