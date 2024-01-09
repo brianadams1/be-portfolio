@@ -12,26 +12,23 @@ const login = async (req, res, next) => {
   try {
     // ambil data body ->email & password
     let loginData = req.body;
-    loginData = Validate(loginValidation, loginData);
+    const { email, password } = Validate(loginValidation, loginData);
 
     // check email betul atau salah
-    const user = await Prisma.user.findUnique({
-      where: { email: loginData.email },
-    });
+    const user = await Prisma.user.findUnique({ where: { email } });
 
     // jika email salah
     if (!user) throw new ResponseError(400, `Email or password is invalid`);
 
     //check password betul atau salah
-    const clientPassword = loginData.password;
+
     const dbPassword = user.password;
-    const checkPassword = await bcrypt.compare(clientPassword, dbPassword);
+    const checkPassword = await bcrypt.compare(password, dbPassword);
 
     // jika password salah
     if (!checkPassword)
       throw new ResponseError(400, `Email or password is invalid`);
 
-    const email = user.email;
     // jika email dan password benar
     // // create token, res param to use in token service
     const token = authService.createToken(res, email);
@@ -59,7 +56,7 @@ const logout = async (req, res) => {
     const email = user.email;
 
     await Prisma.user.update({
-      where: { email: user.email },
+      where: { email },
       data: { token: null },
       select: { email: true },
     });
