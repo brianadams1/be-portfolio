@@ -10,7 +10,7 @@ const createToken = (res, email, age = process.env.SESSION_AGE) => {
   // const maxAge =  age ?? process.env.SESSION_AGE;
 
 
-  let token = jwt.sign({ email: email }, jwtSecret, { expiresIn: age });
+  let token = jwt.sign({ email }, jwtSecret, { expiresIn: age });
   // SEND RES COOKIE
   res.cookie("token", token);
   return token;
