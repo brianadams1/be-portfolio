@@ -16,9 +16,7 @@ const login = async (req, res, next) => {
 
     // check email betul atau salah
     const user = await Prisma.user.findUnique({
-      where: {
-        email: loginData.email,
-      },
+      where: { email: loginData.email },
     });
 
     // jika email salah
@@ -61,15 +59,9 @@ const logout = async (req, res) => {
     const email = user.email;
 
     await Prisma.user.update({
-      where: {
-        email: user.email,
-      },
-      data: {
-        token: null,
-      },
-      select: {
-        email: true,
-      },
+      where: { email: user.email },
+      data: { token: null },
+      select: { email: true },
     });
 
     // CREATE 1 SEC TOKEN

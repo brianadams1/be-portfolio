@@ -7,11 +7,7 @@ import { isSkill } from "../validation/skillValidation.js";
 
 // GET METHOD SKILLS
 const getAll = async (req, res) => {
-  const data = await Prisma.skill.findMany({
-    include: {
-      category: true,
-    },
-  });
+  const data = await Prisma.skill.findMany({ include: { category: true } });
   res.status(200).json({
     message: "SUCCESS GET ALL SKILL DATAS",
     data: data,
@@ -127,7 +123,7 @@ const remove = async (req, res, next) => {
       where: { id },
       select: {
         id: true,
-        skillCategoryId: true
+        skillCategoryId: true,
       },
     });
 

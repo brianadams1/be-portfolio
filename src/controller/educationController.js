@@ -23,9 +23,7 @@ const get = async (req, res, next) => {
     let id = req.params.id;
     id = Validate(isID, id);
 
-    const education = await Prisma.education.findUnique({
-      where: { id },
-    });
+    const education = await Prisma.education.findUnique({ where: { id } });
 
     if (education == null)
       throw new ResponseError(404, `NO DATA EDUCATION : ${id}`);
@@ -81,6 +79,7 @@ const put = async (req, res, next) => {
 
     res.status(200).json({
       message: "SUCCESS REPLACE ALL EDUCATION DATA",
+      data: education,
     });
   } catch (error) {
     next(error);
@@ -106,9 +105,7 @@ const remove = async (req, res, next) => {
       throw new ResponseError(404, `Education with ID ${id} is not found`);
 
     // DELETE EXECUTION
-    const deleteBlog = await Prisma.blog.delete({
-      where: { id },
-    });
+    const deleteBlog = await Prisma.blog.delete({ where: { id } });
     res.status(200).json({
       message: `DELETE DATA WITH ID ${id} IS SUCCESSFUL`,
     });

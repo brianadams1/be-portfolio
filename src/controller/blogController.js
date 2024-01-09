@@ -1,7 +1,7 @@
 import { Prisma } from "../app/prisma.js";
 import { Validate } from "../app/validate.js";
 import { isID } from "../validation/mainValidation.js";
-import { isBlog, isBlogTitle,  } from "../validation/blogValidation.js";
+import { isBlog, isBlogTitle } from "../validation/blogValidation.js";
 import { ResponseError } from "../error/responseError.js";
 
 // GETALL METHOD BLOGS
@@ -27,12 +27,10 @@ const get = async (req, res, next) => {
     id = Validate(isID, id);
 
     // START: CHECK BLOG EXISTENCE
-    const blog = await Prisma.blog.findUnique({
-      where: { id },
-    });
+    const blog = await Prisma.blog.findUnique({ where: { id } });
     // HANDLE NOT FOUND
-    if (blog == null) throw new ResponseError(404, `NO DATA BLOG ${id}`)
-    
+    if (blog == null) throw new ResponseError(404, `NO DATA BLOG ${id}`);
+
     // HANDLE FOUND
     res.status(200).json({
       message: `SUCCESS GET BLOG DATA BY ID : ${id}`,
@@ -52,11 +50,10 @@ const post = async (req, res, next) => {
     // JOI VALIDATE BLOG
     blog = Validate(isBlog, blog);
 
-
     const newBlog = await Prisma.blog.create({
       data: blog,
     });
-    
+
     res.status(200).json({
       message: "BERHASIL MENYIMPAN DATA BLOG BARU",
       data: newBlog,
@@ -76,16 +73,17 @@ const put = async (req, res, next) => {
     id = Validate(isID, id);
 
     // JOI VALIDATE BLOG
-    blog= Validate(isBlog, blog)
-    
+    blog = Validate(isBlog, blog);
+
     // check if current blog is available
     const currentBlog = await Prisma.blog.findUnique({
       where: { id },
       select: { id: true },
     });
 
-    if(!currentBlog) throw new ResponseError(404, `Blog with ID ${id} is not found`)
-    
+    if (!currentBlog)
+      throw new ResponseError(404, `Blog with ID ${id} is not found`);
+
     const update = await Prisma.blog.update({
       where: { id },
       data: blog,
@@ -106,10 +104,10 @@ const updateTitle = async (req, res, next) => {
     let id = req.params.id;
 
     // JOI VALIDATE ID
-    id = Validate(isID,id)
+    id = Validate(isID, id);
 
     // JOI VALIDATE TITLE
-    title = Validate(isBlogTitle, title)
+    title = Validate(isBlogTitle, title);
 
     // check if current blog is available
     const currentBlog = await Prisma.blog.findUnique({
@@ -117,9 +115,8 @@ const updateTitle = async (req, res, next) => {
       select: { id: true },
     });
 
-    if(!currentBlog) throw new ResponseError(404, `Blog with ID ${id} is not found`)
-    
-    
+    if (!currentBlog)
+      throw new ResponseError(404, `Blog with ID ${id} is not found`);
 
     // UPDATE TITLE EXECUTION
     const updateTitle = await Prisma.blog.update({
@@ -149,12 +146,11 @@ const remove = async (req, res, next) => {
       select: { id: true },
     });
 
-    if(!currentBlog) throw new ResponseError(404, `Blog with ID ${id} is not found`)
-    
+    if (!currentBlog)
+      throw new ResponseError(404, `Blog with ID ${id} is not found`);
+
     // DELETE EXECUTION
-    const deleteBlog = await Prisma.blog.delete({
-      where: { id },
-    });
+    const deleteBlog = await Prisma.blog.delete({ where: { id } });
     res.status(200).json({
       message: `DELETE DATA WITH ID ${id} IS SUCCESSFUL`,
     });

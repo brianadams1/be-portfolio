@@ -27,9 +27,7 @@ const get = async (req, res, next) => {
     id = Validate(isID, id);
 
     // FIND PROJECT BY ID
-    let project = await Prisma.project.findUnique({
-      where: { id },
-    });
+    let project = await Prisma.project.findUnique({ where: { id } });
 
     // IF WANTED PROJECT IS NOT FOUND, THROW ERROR
     if (!project) throw new ResponseError(404, `PROJECT ${id} IS NOT FOUND`);
@@ -53,9 +51,7 @@ const post = async (req, res, next) => {
     project = Validate(isProject, project);
 
     // POST THE DATAS
-    let newProject = await Prisma.project.create({
-      data: project,
-    });
+    let newProject = await Prisma.project.create({ data: project });
 
     // IF SUCCESS
     res.status(200).json({
@@ -120,9 +116,7 @@ const remove = async (req, res, next) => {
     if (!project) throw new ResponseError(404, `Project ${id} is not found`);
 
     // IF FOUND, DELETE EXECUTION
-    const deleteProject = await Prisma.blog.delete({
-      where: { id },
-    });
+    const deleteProject = await Prisma.blog.delete({ where: { id } });
 
     res.status(200).json({
       message: "SUCCESS DELETE PROJECT DATA BY ID =" + id,

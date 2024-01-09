@@ -45,18 +45,13 @@ const put = async (req, res, next) => {
 
     // IF DATA IS EMPTY, CREATE NEW DATA FROM INPUT
     if (!profile) {
-      dataProfile = await Prisma.profile.create({
-        data: datas,
-      });
+      dataProfile = await Prisma.profile.create({ data: datas });
     } else {
       // IF EXIST, UPDATE
       dataProfile = await Prisma.profile.update({
-        where: {
-          email: profile.email,
-        },
+        where: { email: profile.email },
         data: datas,
       });
-
     }
 
     res.status(200).json({
