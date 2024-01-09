@@ -12,8 +12,6 @@ import { notFound } from "./src/middleware/notfound.js";
 import { logging } from "./src/middleware/logging.js";
 import { errorAgain } from "./src/middleware/errorMiddleware.js";
 import { routerPublic } from "./src/router/public.js";
-import { Prisma } from "./src/app/prisma.js";
-import jwt from "jsonwebtoken";
 import { authMiddleware } from "./src/middleware/authMiddleware.js";
 
 const app = express();
