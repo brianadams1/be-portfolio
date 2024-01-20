@@ -26,7 +26,8 @@ const login = async (req, res, next) => {
     const checkPassword = await bcrypt.compare(password, dbPassword);
 
     // jika password salah
-    if (!checkPassword) throw new ResponseError(400, `Email or password is invalid`);
+    if (!checkPassword)
+      throw new ResponseError(400, `Email or password is invalid`);
 
     // jika email dan password benar
     // // create token, res param to use in token service
