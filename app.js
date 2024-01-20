@@ -12,6 +12,7 @@ import { notFound } from "./src/middleware/notfound.js";
 import { logging } from "./src/middleware/logging.js";
 import { errorAgain } from "./src/middleware/errorMiddleware.js";
 import { routerPublic } from "./src/router/public.js";
+import { routerExperience} from "./src/router/experience.js"
 import { authMiddleware } from "./src/middleware/authMiddleware.js";
 
 const app = express();
@@ -62,6 +63,10 @@ app.use(routerProject);
 // ---------- SKILLS ----------
 
 app.use(routerSkill);
+
+// ---------- EXPERIENCE --------------
+
+app.use(routerExperience)
 
 // ---------- LOGIN & LOGOUT -----------
 

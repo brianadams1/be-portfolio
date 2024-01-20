@@ -39,3 +39,8 @@ routerPublic.get("/project/:id", projectController.get);
 routerPublic.get("/skills", skillController.getAll);
 // GET BY ID
 routerPublic.get("/skill/:id", skillController.get);
+
+// EXPERIENCE ===================
+routerPublic.get("/experiences", skillController.getAll)
+// GET BY ID
+routerPublic.get("/experiences/:id", skillController.get)
