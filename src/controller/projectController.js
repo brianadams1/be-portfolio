@@ -33,7 +33,7 @@ const get = async (req, res, next) => {
     if (!project) throw new ResponseError(404, `PROJECT ${id} IS NOT FOUND`);
 
     res.status(200).json({
-      message: "SUCCESS GET PROJECT DATA BY ID",
+      message: "SUCCESS GET PROJECT DATA BY ID" + id,
       data: project,
     });
   } catch (error) {
