@@ -5,6 +5,7 @@ import educationController from "../controller/educationController.js";
 import profileController from "../controller/profileController.js";
 import projectController from "../controller/projectController.js";
 import skillController from "../controller/skillController.js";
+import experienceController from "../controller/experienceController.js";
 
 export const routerPublic = express.Router();
 
@@ -41,6 +42,6 @@ routerPublic.get("/skills", skillController.getAll);
 routerPublic.get("/skill/:id", skillController.get);
 
 // EXPERIENCE ===================
-routerPublic.get("/experiences", skillController.getAll)
+routerPublic.get("/experiences", experienceController.getAll);
 // GET BY ID
-routerPublic.get("/experiences/:id", skillController.get)
+routerPublic.get("/experience/:id", experienceController.get);
