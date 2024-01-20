@@ -59,4 +59,39 @@ const post = async (req, res, next) => {
   }
 };
 
+const put = async (req, res, next) => {
+  try {
+    // GET ID AND VALIDATE
+    let id = req.params.id;
+    id = Validate(isID, id);
+
+    // GET EXPERIENCE FROM INPUT AND VALIDATE
+    let experience = req.body;
+    experience = Validate(isExperience, experience);
+
+    // SEARCH WANTED EXPERIENCE
+    let certainExperience = await Prisma.experience.findUnique({
+      where: { id },
+      select: { id: true },
+    });
+
+    //IF WANTED EXPERIENCE IS UNAVAILABLE
+    if (!certainExperience)
+      throw new ResponseError(404, `EXPERIENCE ${id} IS NOT FOUND`);
+
+    // UPDATE THE EXPERIENCE
+    const update = await Prisma.experience.update({
+      where: { id },
+      data: experience,
+    });
+
+    res.status(200).json({
+      message: "SUCCESS UPDATE EXPERIENCE DATA BY ID",
+      data: experience,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 export default {};

@@ -70,7 +70,7 @@ const put = async (req, res, next) => {
     let id = req.params.id;
     id = Validate(isID, id);
 
-    // GET PROJECT FROM DATABASE AND VALIDATE
+    // GET PROJECT FROM INPUT AND VALIDATE
     let project = req.body;
     project = Validate(isProject, project);
 
