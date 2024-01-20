@@ -41,11 +41,22 @@ const get = async (req, res, next) => {
 };
 
 const post = async (req, res, next) => {
-    try {
-        
-    } catch (error) {
-        next(error)
-    }
-}
+  try {
+    // GET EXPERIENCE INPUT DATA AND VALIDATE
+    let experience = req.body;
+    experience = Validate(isExperience, experience);
+
+    // POST THE DATA
+    let newExperience = await Prisma.experience.create({ data: experience });
+
+    // IF SUCCESS
+    res.status(200).json({
+      message: "SUCCESS POST NEW EXPERIENCE",
+      data: newExperience,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
 export default {};
