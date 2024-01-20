@@ -94,4 +94,37 @@ const put = async (req, res, next) => {
   }
 };
 
-export default {};
+const remove = async (req, res, next) => {
+  try {
+    // GET ID FROM REQUEST AND VALIDATE
+    let id = req.params.id;
+    id = Validate(isID, id);
+
+    // CHECK IF CERTAIN PROJECT IS EXIST
+    let experience = await Prisma.experience.findUnique({
+      where: { id },
+      select: { id: true },
+    });
+
+    // IF THE EXPERIENCE IS NOT FOUND
+    if (!experience)
+      throw new ResponseError(404, `EXPERIENCE ${id} IS NOT FOUND`);
+
+    // IF FOUND, EXECUTE THE DELETE
+    const deleteExperience = await Prisma.experience.delete({ where: { id } });
+
+    res.status(200).json({
+      message: "SUCCESS DELETE EXPERIENCE DATA BY ID " + id,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export default {
+  getAll,
+  get,
+  post,
+  put,
+  remove,
+};
