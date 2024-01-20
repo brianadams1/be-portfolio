@@ -18,7 +18,7 @@ const login = async (req, res, next) => {
     const user = await Prisma.user.findUnique({ where: { email } });
 
     // jika email salah
-    if (!user) throw new ResponseError(400, `Email is invalid`);
+    if (!user) throw new ResponseError(400, `Email or password is invalid`);
 
     //check password betul atau salah
 
@@ -26,7 +26,7 @@ const login = async (req, res, next) => {
     const checkPassword = await bcrypt.compare(password, dbPassword);
 
     // jika password salah
-    if (!checkPassword) throw new ResponseError(400, ` password is invalid`);
+    if (!checkPassword) throw new ResponseError(400, `Email or password is invalid`);
 
     // jika email dan password benar
     // // create token, res param to use in token service
