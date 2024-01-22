@@ -86,7 +86,7 @@ const put = async (req, res, next) => {
     });
 
     res.status(200).json({
-      message: "SUCCESS UPDATE EXPERIENCE DATA BY ID",
+      message: "SUCCESS UPDATE EXPERIENCE DATA BY ID " + id,
       data: experience,
     });
   } catch (error) {
