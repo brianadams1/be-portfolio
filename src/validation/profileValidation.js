@@ -1,10 +1,11 @@
 import Joi from 'joi'
-import { isString100, isText, isURI } from './mainValidation.js'
+import { isString100, isString255, isText, isURI } from './mainValidation.js'
 
 export const isProfile = Joi.object({
     email: isString100.email().lowercase().required().label("Email"),
     firstName: isString100.required().label("Firstname"),
     lastName: isString100.required().label("Lastname"),
+    avatar: Joi.string().max(255).optional().label("Avatar"),
     dob: Joi.date().less('now').required().label("Date Of Birth"),
     address: isText.required().label("Address"),
     city: isString100.required().label("City"),

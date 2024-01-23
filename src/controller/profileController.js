@@ -38,6 +38,12 @@ const put = async (req, res, next) => {
     // GET INPUTTED DATA
     let datas = req.body;
 
+    if(req.file){
+      const avatar = "/" + req.file.path.replaceAll("\\", "/")
+      datas.avatar = avatar
+      
+    }
+
     // VALIDATE THE DATAS
     datas = Validate(isProfile, datas);
 
