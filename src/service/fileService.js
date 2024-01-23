@@ -10,4 +10,14 @@ const createUploads = async (folderName) => {
   }
 };
 
-export default { createUploads };
+const removeFile = async (file) => {
+  try {
+    // delete execution
+    await fs.rm("./" + file);
+  } catch (error) {
+    // throw error if delete is error
+    throw error;
+  }
+};
+
+export default { removeFile, createUploads };

@@ -1,6 +1,7 @@
 import { Prisma } from "../app/prisma.js";
 import { Validate } from "../app/validate.js";
 import { isProfile } from "../validation/profileValidation.js";
+import fileService from "../service/fileService.js";
 
 // GET METHOD PROFILE
 const get = async (req, res, next) => {
@@ -38,10 +39,10 @@ const put = async (req, res, next) => {
     // GET INPUTTED DATA
     let datas = req.body;
 
-    if(req.file){
-      const avatar = "/" + req.file.path.replaceAll("\\", "/")
-      datas.avatar = avatar
-      
+    // ADD AVATAR
+    if (req.file) {
+      const avatar = "/" + req.file.path.replaceAll("\\", "/");
+      datas.avatar = avatar;
     }
 
     // VALIDATE THE DATAS
@@ -58,6 +59,9 @@ const put = async (req, res, next) => {
         where: { email: profile.email },
         data: datas,
       });
+
+      // DELETE PREVIOUS AVATAR PIC
+      if (profile.avatar) await fileService.removeFile("." + profile.avatar);
     }
 
     res.status(200).json({
@@ -65,6 +69,9 @@ const put = async (req, res, next) => {
       data: dataProfile,
     });
   } catch (error) {
+    // IF ERROR AND FILE IS EXIST, DELETE FILE
+    if (req.file) fileService.removeFile(req.file.path);
+
     next(error);
   }
 };
