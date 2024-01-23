@@ -1,6 +1,7 @@
 import express from "express";
 import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
+
 dotenv.config();
 import { routerProfile } from "./src/router/profile.js";
 import { routerEducation } from "./src/router/education.js";
@@ -12,8 +13,9 @@ import { notFound } from "./src/middleware/notfound.js";
 import { logging } from "./src/middleware/logging.js";
 import { errorAgain } from "./src/middleware/errorMiddleware.js";
 import { routerPublic } from "./src/router/public.js";
-import { routerExperience} from "./src/router/experience.js"
+import { routerExperience } from "./src/router/experience.js";
 import { authMiddleware } from "./src/middleware/authMiddleware.js";
+import fileService from "./src/service/fileService.js";
 
 const app = express();
 
@@ -25,6 +27,8 @@ app.use(express.json());
 // middleware
 app.use(logging);
 
+// CREATE FOLDER UPLOADS
+fileService.createUploads("./uploads");
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ PAGE_PATHING START ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // PUBLIC API (WITHOUT LOGIN)
@@ -66,7 +70,7 @@ app.use(routerSkill);
 
 // ---------- EXPERIENCE --------------
 
-app.use(routerExperience)
+app.use(routerExperience);
 
 // ---------- LOGIN & LOGOUT -----------
 
