@@ -35,7 +35,7 @@ const getAll = async (req, res, next) => {
 };
 
 // PAGINATION METHOD
-const getByPage = async (limit, skip) => {
+const getByPage = async (limit, skip = 0) => {
   // FIND ALL PROJECTS
   let projects = await Prisma.project.findMany({
     take: limit,
@@ -161,4 +161,5 @@ export default {
   post,
   put,
   remove,
+  getByPage,
 };

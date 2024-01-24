@@ -2,12 +2,13 @@ import { Prisma } from "../app/prisma.js";
 import { Validate } from "../app/validate.js";
 import { isProfile } from "../validation/profileValidation.js";
 import fileService from "../service/fileService.js";
+import projectController from "./projectController.js";
 
 // GET METHOD PROFILE
 const get = async (req, res, next) => {
   try {
     // CHECK TO DATABASE
-    const profile = await getProfile()
+    const profile = await getProfile();
 
     // IF DATA IS EXIST, SEND DATA
     res.status(200).json({
@@ -69,9 +70,13 @@ const put = async (req, res, next) => {
 const portfolio = async (req, res, next) => {
   try {
     // TAKE PROFILE DATA
-    const profile = await getProfile()
+    const profile = await getProfile();
 
     // TAKE PROJECT DATA
+    const { projects: projects } = await projectController.getByPage(4);
+
+    console.log("project===========");
+    console.log(projects);
     // TAKE EXPERIENCE DATA
     // TAKE EDUCATION DATA
     // TAKE SKILL DATA BY CATEGORY
@@ -80,8 +85,9 @@ const portfolio = async (req, res, next) => {
     res.status(200).json({
       message: "SUCCESS GET PORTFOLIO DATA",
       data: {
-        profile
-      }
+        profile,
+        projects,
+      },
     });
   } catch (error) {
     next(error);
@@ -91,20 +97,20 @@ const portfolio = async (req, res, next) => {
 const getProfile = async () => {
   let profile = await Prisma.profile.findFirst();
 
-    // IF DATA IS EMPTY, SEND DUMMY DATA
-    if (!profile) {
-      profile = {
-        email: "example@email.com",
-        firstName: "-",
-        lastName: "-",
-        dob: "1900-01-01",
-        address: "-",
-        city: "-",
-        country: "-",
-        job: "-",
-      };
-    }
-    return profile
-}
+  // IF DATA IS EMPTY, SEND DUMMY DATA
+  if (!profile) {
+    profile = {
+      email: "example@email.com",
+      firstName: "-",
+      lastName: "-",
+      dob: "1900-01-01",
+      address: "-",
+      city: "-",
+      country: "-",
+      job: "-",
+    };
+  }
+  return profile;
+};
 
 export default { get, put, portfolio };
