@@ -7,12 +7,35 @@ import { isProject } from "../validation/projectValidation.js";
 // GET ALL METHOD
 const getAll = async (req, res, next) => {
   try {
+    // PAGINATION
+    // PAGE
+    const page = Number(req.query.page) || 1;
+
+    // LIMIT
+    const limit = Number(req.query.limit) || 10;
+
+    // SKIP
+    const skip = (page - 1) * limit;
+
     // FIND ALL PROJECTS
-    let projects = await Prisma.project.findMany();
+    let projects = await Prisma.project.findMany({
+      take: limit,
+      skip,
+    });
+
+    // GET TOTAL DATA
+    const total = await Prisma.project.count();
+
+    // GET MAX PAGE
+    const maxPage = Math.ceil(total / limit);
 
     res.status(200).json({
       message: "SUCCESS GET ALL PROJECTS DATA",
       data: projects,
+      page,
+      total,
+      limit,
+      maxPage,
     });
   } catch (error) {
     next(error);
