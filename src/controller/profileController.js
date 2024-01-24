@@ -17,6 +17,9 @@ const get = async (req, res, next) => {
         lastName: "-",
         dob: "1900-01-01",
         address: "-",
+        city: "-",
+        country: "-",
+        job: "-",
       };
     }
 
@@ -76,4 +79,14 @@ const put = async (req, res, next) => {
   }
 };
 
-export default { get, put };
+const portfolio = async (req, res, next) => {
+  try {
+    res.status(200).json({
+      message: "SUCCESS GET PORTFOLIO DATA",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export default { get, put, portfolio };
