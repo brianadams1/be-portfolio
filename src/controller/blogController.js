@@ -33,7 +33,7 @@ const getAll = async (req, res, next) => {
 };
 
 // PAGINATION METHOD
-const getByPage = async (page, limit = 10) => {
+const getByPage = async (page = 1, limit = 10) => {
   // CALCULATE SKIP
   const skip = (page - 1) * limit;
 
