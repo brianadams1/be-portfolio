@@ -14,10 +14,7 @@ const getAll = async (req, res, next) => {
     // LIMIT
     const limit = Number(req.query.limit) || 10;
 
-    // SKIP
-    const skip = (page - 1) * limit;
-
-    const { projects, total } = await getByPage(limit, skip);
+    const { projects, total } = await getByPage(page, limit);
     // GET MAX PAGE
     const maxPage = Math.ceil(total / limit);
 
@@ -35,7 +32,10 @@ const getAll = async (req, res, next) => {
 };
 
 // PAGINATION METHOD
-const getByPage = async (limit, skip = 0) => {
+const getByPage = async (page, limit = 10) => {
+  // CALCULATE SKIP
+  const skip = (page - 1) * limit;
+
   // FIND ALL PROJECTS
   let projects = await Prisma.project.findMany({
     take: limit,

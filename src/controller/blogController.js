@@ -7,16 +7,48 @@ import { ResponseError } from "../error/responseError.js";
 // GETALL METHOD BLOGS
 const getAll = async (req, res, next) => {
   try {
-    // FIND MANY >> ambil semua blog
-    const datas = await Prisma.blog.findMany();
+    // PAGINATION
+    // PAGE
+    const page = Number(req.query.page) || 1;
+
+    // LIMIT
+    const limit = Number(req.query.limit) || 10;
+
+    const { blogs, total } = await getByPage(page, limit);
+
+    // GET MAX PAGE
+    const maxPage = Math.ceil(total / limit);
+
     res.status(200).json({
       message: "SUCCESS GET ALL DATA BLOG",
-      data: datas,
+      data: blogs,
+      page,
+      total,
+      limit,
+      maxPage,
     });
   } catch (error) {
     next(error);
   }
 };
+
+// PAGINATION METHOD
+const getByPage = async (page, limit = 10) => {
+  // CALCULATE SKIP
+  const skip = (page - 1) * limit;
+
+  // FIND ALL BLOGS
+  let blogs = await Prisma.blog.findMany({
+    take: limit,
+    skip,
+  });
+
+  // GET TOTAL DATA
+  const total = await Prisma.blog.count();
+
+  return { blogs, total };
+};
+
 // GET METHOD BLOG BY ID
 const get = async (req, res, next) => {
   // IF SERVER IS OK
@@ -161,6 +193,7 @@ const remove = async (req, res, next) => {
 
 export default {
   getAll,
+  getByPage,
   get,
   post,
   put,

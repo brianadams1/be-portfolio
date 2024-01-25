@@ -3,6 +3,7 @@ import { Validate } from "../app/validate.js";
 import { isProfile } from "../validation/profileValidation.js";
 import fileService from "../service/fileService.js";
 import projectController from "./projectController.js";
+import blogController from "./blogController.js";
 
 // GET METHOD PROFILE
 const get = async (req, res, next) => {
@@ -75,18 +76,18 @@ const portfolio = async (req, res, next) => {
     // TAKE PROJECT DATA
     const { projects: projects } = await projectController.getByPage(4);
 
-    console.log("project===========");
-    console.log(projects);
     // TAKE EXPERIENCE DATA
     // TAKE EDUCATION DATA
     // TAKE SKILL DATA BY CATEGORY
     // TAKE BLOG DATA
+    const {blogs} = await blogController.getByPage(4)
 
     res.status(200).json({
       message: "SUCCESS GET PORTFOLIO DATA",
       data: {
         profile,
         projects,
+        blogs
       },
     });
   } catch (error) {
