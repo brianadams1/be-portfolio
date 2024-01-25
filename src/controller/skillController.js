@@ -20,7 +20,7 @@ const getAll = async (req, res, next) => {
 
 const getSkillByCategory = async (req, res, next) => {
   try {
-    const data = await handleSkillByCategory
+    const data = await handleSkillByCategory()
 
     res.status(200).json({
       message: "SUCCESS GET SKILL BY CATEGORY",
