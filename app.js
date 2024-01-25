@@ -1,6 +1,7 @@
 import express from "express";
 import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
+import cors from "cors";
 
 dotenv.config();
 import { routerProfile } from "./src/router/profile.js";
@@ -31,12 +32,14 @@ app.use(logging);
 fileService.createUploads("./uploads");
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ PAGE_PATHING START ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+// HANDLE CORS
+app.use(cors());
+
 // PUBLIC API (WITHOUT LOGIN)
 app.use(routerPublic);
 
 // MIDDLEWARE FOR AUTHENTICATION
 app.use(authMiddleware);
-
 // ROUTER BERIKUTNYA AKAN CHECK AUTHENTICATION
 
 // ------------ HOME -------------- (now useless)
