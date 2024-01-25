@@ -7,7 +7,7 @@ import { isID } from "../validation/mainValidation.js";
 // GET METHOD EDUCATIONS
 const getAll = async (req, res, next) => {
   try {
-    const datas = await Prisma.education.findMany();
+    const datas = await getEducations();
     res.status(200).json({
       message: "SUCCESS GET ALL EDUCATIONS",
       data: datas,
@@ -16,6 +16,12 @@ const getAll = async (req, res, next) => {
     next(error);
   }
 };
+
+const getEducations = async () => {
+  return await Prisma.education.findMany({
+    orderBy: {'startYear' : 'desc'}
+  });
+}
 
 // GET METHOD EDUCATION BY ID
 const get = async (req, res, next) => {
@@ -116,6 +122,7 @@ const remove = async (req, res, next) => {
 
 export default {
   getAll,
+  getEducations,
   get,
   post,
   put,

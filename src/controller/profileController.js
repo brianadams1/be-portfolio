@@ -4,6 +4,7 @@ import { isProfile } from "../validation/profileValidation.js";
 import fileService from "../service/fileService.js";
 import projectController from "./projectController.js";
 import blogController from "./blogController.js";
+import educationController from "./educationController.js";
 
 // GET METHOD PROFILE
 const get = async (req, res, next) => {
@@ -74,20 +75,23 @@ const portfolio = async (req, res, next) => {
     const profile = await getProfile();
 
     // TAKE PROJECT DATA
-    const { projects: projects } = await projectController.getByPage(4);
+    const { projects } = await projectController.getByPage(1, 4);
 
     // TAKE EXPERIENCE DATA
     // TAKE EDUCATION DATA
+    const educations = await educationController.getEducations(1, 4);
+
     // TAKE SKILL DATA BY CATEGORY
     // TAKE BLOG DATA
-    const {blogs} = await blogController.getByPage(4)
+    const { blogs } = await blogController.getByPage(1, 4);
 
     res.status(200).json({
       message: "SUCCESS GET PORTFOLIO DATA",
       data: {
         profile,
-        projects,
-        blogs
+        projects: projects,
+        educations: educations,
+        blogs: blogs,
       },
     });
   } catch (error) {
