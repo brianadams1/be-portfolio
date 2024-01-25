@@ -5,6 +5,7 @@ import fileService from "../service/fileService.js";
 import projectController from "./projectController.js";
 import blogController from "./blogController.js";
 import educationController from "./educationController.js";
+import skillController from "./skillController.js";
 
 // GET METHOD PROFILE
 const get = async (req, res, next) => {
@@ -79,11 +80,12 @@ const portfolio = async (req, res, next) => {
 
     // TAKE EXPERIENCE DATA
     // TAKE EDUCATION DATA
-    const educations = await educationController.getEducations(1, 4);
+    const educations = await educationController.getEducations();
 
     // TAKE SKILL DATA BY CATEGORY
+    const skills = await skillController.handleSkillByCategory();
     // TAKE BLOG DATA
-    const { blogs } = await blogController.getByPage(1, 4);
+    const { blogs } = await blogController.getByPage();
 
     res.status(200).json({
       message: "SUCCESS GET PORTFOLIO DATA",

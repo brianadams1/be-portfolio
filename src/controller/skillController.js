@@ -20,14 +20,7 @@ const getAll = async (req, res, next) => {
 
 const getSkillByCategory = async (req, res, next) => {
   try {
-    const data = await Prisma.skillCategory.findMany({
-      include: {
-        skill: {
-          orderBy: { title: "asc" },
-        },
-      },
-      orderBy: { title: "asc" },
-    });
+    const data = await handleSkillByCategory
 
     res.status(200).json({
       message: "SUCCESS GET SKILL BY CATEGORY",
@@ -37,6 +30,17 @@ const getSkillByCategory = async (req, res, next) => {
     next(error);
   }
 };
+
+const handleSkillByCategory = async () => {
+  return  await Prisma.skillCategory.findMany({
+    include: {
+      skill: {
+        orderBy: { title: "asc" },
+      },
+    },
+    orderBy: { title: "asc" },
+  });
+}
 
 // GET SKILL BY ID
 const get = async (req, res, next) => {
@@ -176,6 +180,7 @@ const remove = async (req, res, next) => {
 export default {
   getAll,
   getSkillByCategory,
+  handleSkillByCategory,
   get,
   post,
   put,
