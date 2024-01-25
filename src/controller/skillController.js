@@ -6,12 +6,36 @@ import { isID } from "../validation/mainValidation.js";
 import { isSkill } from "../validation/skillValidation.js";
 
 // GET METHOD SKILLS
-const getAll = async (req, res) => {
-  const data = await Prisma.skill.findMany({ include: { category: true } });
-  res.status(200).json({
-    message: "SUCCESS GET ALL SKILL DATAS",
-    data: data,
-  });
+const getAll = async (req, res, next) => {
+  try {
+    const data = await Prisma.skill.findMany({ include: { category: true } });
+    res.status(200).json({
+      message: "SUCCESS GET ALL SKILL DATAS",
+      data: data,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const getSkillByCategory = async (req, res, next) => {
+  try {
+    const data = await Prisma.skillCategory.findMany({
+      include: {
+        skill: {
+          orderBy: { title: "asc" },
+        },
+      },
+      orderBy: { title: "asc" },
+    });
+
+    res.status(200).json({
+      message: "SUCCESS GET SKILL BY CATEGORY",
+      data,
+    });
+  } catch (error) {
+    next(error);
+  }
 };
 
 // GET SKILL BY ID
@@ -49,6 +73,7 @@ const post = async (req, res, next) => {
     const insertSkill = {
       title: skill.title,
       skillCategoryId: id_category,
+      svg: skill.svg,
     };
 
     const dataSkill = await Prisma.skill.create({ data: insertSkill });
@@ -150,6 +175,7 @@ const remove = async (req, res, next) => {
 
 export default {
   getAll,
+  getSkillByCategory,
   get,
   post,
   put,

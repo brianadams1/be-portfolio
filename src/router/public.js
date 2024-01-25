@@ -29,7 +29,7 @@ routerPublic.get("/educations/:id", educationController.get);
 // PROFILE ===================
 // GET
 routerPublic.get("/profile", profileController.get);
-routerPublic.get('/portfolio', profileController.portfolio)
+routerPublic.get("/portfolio", profileController.portfolio);
 
 // PROJECT ======================
 // GET ALL
@@ -41,6 +41,8 @@ routerPublic.get("/project/:id", projectController.get);
 routerPublic.get("/skills", skillController.getAll);
 // GET BY ID
 routerPublic.get("/skill/:id", skillController.get);
+// GET BY CATEGORY
+routerPublic.get("/skill_by_category", skillController.getSkillByCategory);
 
 // EXPERIENCE ===================
 routerPublic.get("/experiences", experienceController.getAll);
