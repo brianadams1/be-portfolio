@@ -2,6 +2,7 @@ import express from "express";
 import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
 import cors from "cors";
+import fs from "fs/promises";
 
 dotenv.config();
 import { routerProfile } from "./src/router/profile.js";
@@ -30,10 +31,25 @@ app.use(logging);
 
 // CREATE FOLDER UPLOADS
 fileService.createUploads("./uploads");
+
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ PAGE_PATHING START ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // HANDLE CORS
 app.use(cors({ origin: ["http://localhost:3000", "http://localhost:3001"] }));
+
+// SET STATIC FILE
+app.use("/uploads", express.static("./uploads"));
+
+// HANDLE FILE NOT EXIST
+app.use("/uploads", async (req, res) => {
+  try {
+    await fs.access("./uploads" + req.url);
+  } catch (error) {
+    res.status(404).json({
+      message: "File is not found",
+    });
+  }
+});
 
 // PUBLIC API (WITHOUT LOGIN)
 app.use(routerPublic);
