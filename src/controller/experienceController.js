@@ -7,7 +7,7 @@ import { isID } from "../validation/mainValidation.js";
 // GET ALL METHOD
 const getAll = async (req, res, next) => {
   try {
-    let experiences = await Prisma.experience.findMany();
+    let experiences = getExperiences();
 
     res.status(200).json({
       message: "SUCCESS GET ALL EXPERIENCE DATA",
@@ -16,6 +16,10 @@ const getAll = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
+};
+
+const getExperiences = async (req, res, next) => {
+  return await Prisma.experience.findMany();
 };
 
 const get = async (req, res, next) => {
@@ -123,6 +127,7 @@ const remove = async (req, res, next) => {
 
 export default {
   getAll,
+  getExperiences,
   get,
   post,
   put,

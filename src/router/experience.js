@@ -7,5 +7,5 @@ routerExperience.post("/experience", experienceController.post);
 
 routerExperience
   .route("/experience/:id")
-  .put(experienceController.put)
-  .delete(experienceController.remove);
+.put(experienceController.put)
+.delete(experienceController.remove);

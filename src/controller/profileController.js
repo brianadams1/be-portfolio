@@ -6,6 +6,7 @@ import projectController from "./projectController.js";
 import blogController from "./blogController.js";
 import educationController from "./educationController.js";
 import skillController from "./skillController.js";
+import experienceController from "./experienceController.js";
 
 // GET METHOD PROFILE
 const get = async (req, res, next) => {
@@ -79,6 +80,8 @@ const portfolio = async (req, res, next) => {
     const { projects } = await projectController.getByPage(1, 4);
 
     // TAKE EXPERIENCE DATA
+    const experience = await experienceController.getExperiences()
+
     // TAKE EDUCATION DATA
     const educations = await educationController.getEducations();
 
@@ -91,9 +94,11 @@ const portfolio = async (req, res, next) => {
       message: "SUCCESS GET PORTFOLIO DATA",
       data: {
         profile,
-        projects: projects,
-        educations: educations,
-        blogs: blogs,
+        projects,
+        experience,
+        skills,
+        educations,
+        blogs,
       },
     });
   } catch (error) {
