@@ -7,10 +7,10 @@ import { isID } from "../validation/mainValidation.js";
 // GET METHOD EDUCATIONS
 const getAll = async (req, res, next) => {
   try {
-    const datas = await getEducations();
+    const data = await getEducations();
     res.status(200).json({
       message: "SUCCESS GET ALL EDUCATIONS",
-      data: datas,
+      data,
     });
   } catch (error) {
     next(error);
@@ -19,9 +19,9 @@ const getAll = async (req, res, next) => {
 
 const getEducations = async () => {
   return await Prisma.education.findMany({
-    orderBy: {'startYear' : 'desc'}
+    orderBy: { startYear: "desc" },
   });
-}
+};
 
 // GET METHOD EDUCATION BY ID
 const get = async (req, res, next) => {
@@ -111,7 +111,8 @@ const remove = async (req, res, next) => {
       throw new ResponseError(404, `Education with ID ${id} is not found`);
 
     // DELETE EXECUTION
-    const deleteBlog = await Prisma.blog.delete({ where: { id } });
+    await Prisma.experience.delete({ where: { id } });
+
     res.status(200).json({
       message: `DELETE DATA WITH ID ${id} IS SUCCESSFUL`,
     });

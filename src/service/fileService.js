@@ -16,7 +16,8 @@ const removeFile = async (file) => {
     await fs.rm("./" + file);
   } catch (error) {
     // throw error if delete is error
-    throw error;
+    // throw (error);
+    console.log("error deleting data")
   }
 };
 
