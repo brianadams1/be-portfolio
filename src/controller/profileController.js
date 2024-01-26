@@ -55,7 +55,12 @@ const put = async (req, res, next) => {
       });
 
       // DELETE PREVIOUS AVATAR PIC
-      if (profile.avatar) await fileService.removeFile("." + profile.avatar);
+      const old_avatar = dataProfile.avatar
+      const new_avatar = profile.avatar
+      if (new_avatar) {
+        if (new_avatar != old_avatar)
+          await fileService.removeFile("." + new_avatar);
+      }
     }
 
     res.status(200).json({
@@ -80,7 +85,7 @@ const portfolio = async (req, res, next) => {
     const { projects } = await projectController.getByPage(1, 4);
 
     // TAKE EXPERIENCE DATA
-    const experience = await experienceController.getExperiences()
+    const experience = await experienceController.getExperiences();
 
     // TAKE EDUCATION DATA
     const educations = await educationController.getEducations();
