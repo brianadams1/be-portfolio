@@ -8,5 +8,9 @@ export const isExperience = Joi.object({
   title: isString100.required().label("Title"),
   description: isText.required().label("Description"),
   startDate: Joi.date().max("now").required().label("Start Date"),
-  endDate: Joi.date().min(Joi.ref("startDate")).max("now").label("Start Date"),
+  endDate: Joi.date()
+    .min(Joi.ref("startDate"))
+    .max("now")
+    .label("Start Date")
+    .allow(null, ""),
 });
