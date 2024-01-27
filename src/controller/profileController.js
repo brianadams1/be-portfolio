@@ -7,6 +7,7 @@ import blogController from "./blogController.js";
 import educationController from "./educationController.js";
 import skillController from "./skillController.js";
 import experienceController from "./experienceController.js";
+import dayjs from "dayjs";
 
 // GET METHOD PROFILE
 const get = async (req, res, next) => {
@@ -55,8 +56,8 @@ const put = async (req, res, next) => {
       });
 
       // DELETE PREVIOUS AVATAR PIC
-      const old_avatar = dataProfile.avatar
-      const new_avatar = profile.avatar
+      const old_avatar = dataProfile.avatar;
+      const new_avatar = profile.avatar;
       if (new_avatar) {
         if (new_avatar != old_avatar)
           await fileService.removeFile("." + new_avatar);
@@ -94,6 +95,15 @@ const portfolio = async (req, res, next) => {
     const skills = await skillController.handleSkillByCategory();
     // TAKE BLOG DATA
     const { blogs } = await blogController.getByPage();
+
+    // CALCULATE PROJECT AMOUNT
+    profile.project_count = projects.length;
+
+    // CALCULATE EXPERIENCE YEAR > FIRST PROJECT STARTYEAR COMPARE TO NOW
+    const firstProject = projects.findLast((p) => true);
+    const firstProjectDate = dayjs(firstProject.startDate);
+    profile.year_of_exp = dayjs().diff(firstProjectDate, "year");
+    profile.month_of_exp = dayjs().diff(firstProjectDate, "month");
 
     res.status(200).json({
       message: "SUCCESS GET PORTFOLIO DATA",
