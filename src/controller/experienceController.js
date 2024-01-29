@@ -17,7 +17,8 @@ const formatData = (e) => {
     e.readEndDateTime = dayjs(endDate).format("MMM YYYY");
     e.shortenEndDateTime = dayjs(endDate).format("MMM YYYY");
   } else {
-    e.endDate = 'Present'
+    e.readEndDateTime = 'Present'
+    e.shortenEndDateTime = 'Present'
   }
 };
 

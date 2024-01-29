@@ -49,6 +49,7 @@ const getByPage = async (page = 1, limit = 10) => {
   let blogs = await Prisma.blog.findMany({
     take: limit,
     skip,
+    orderBy: { createdAt: "desc" },
   });
 
   for (const blog of blogs) {
