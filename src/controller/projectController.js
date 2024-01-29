@@ -8,8 +8,16 @@ import dayjs from "dayjs";
 const formatData = (p) => {
   const date = p.startDate;
 
-  p.readDateTime = dayjs(date).format("DD MMMM YYYY HH:MM A");
-  p.shortenDateTime = dayjs(date).format("D MMM YYYY HH:MM A");
+  p.readDateTime = dayjs(date).format("D MMM YYYY");
+  p.shortenDateTime = dayjs(date).format("D MMM YYYY");
+
+  if (p.endDate) {
+    const endDate = p.endDate;
+    p.readEndDateTime = dayjs(endDate).format("D MMM YYYY");
+    p.shortenEndDateTime = dayjs(endDate).format("D MMM YYYY");
+  } else {
+    p.readEndDateTime = "Present";
+  }
 };
 
 // GET ALL METHOD
@@ -73,6 +81,8 @@ const get = async (req, res, next) => {
     // IF WANTED PROJECT IS NOT FOUND, THROW ERROR
     if (!project) throw new ResponseError(404, `PROJECT ${id} IS NOT FOUND`);
 
+    formatData(project);
+
     res.status(200).json({
       message: "SUCCESS GET PROJECT DATA BY ID" + id,
       data: project,
@@ -93,6 +103,8 @@ const post = async (req, res, next) => {
 
     // POST THE DATAS
     let newProject = await Prisma.project.create({ data: project });
+
+    formatData(project);
 
     // IF SUCCESS
     res.status(200).json({
@@ -130,6 +142,8 @@ const put = async (req, res, next) => {
       where: { id },
       data: project,
     });
+
+    formatData(project);
 
     res.status(200).json({
       message: "SUCCESS UPDATE PROJECT DATA BY ID",
