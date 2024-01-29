@@ -75,6 +75,8 @@ const get = async (req, res, next) => {
     // HANDLE NOT FOUND
     if (blog == null) throw new ResponseError(404, `NO DATA BLOG ${id}`);
 
+    formatData(blog)
+
     // HANDLE FOUND
     res.status(200).json({
       message: `SUCCESS GET BLOG DATA BY ID : ${id}`,
@@ -98,8 +100,10 @@ const post = async (req, res, next) => {
       data: blog,
     });
 
+    formatData(newBlog)
+    
     res.status(200).json({
-      message: "BERHASIL MENYIMPAN DATA BLOG BARU",
+      message: "SUCCESS POST NEW BLOG",
       data: newBlog,
     });
   } catch (error) {
@@ -133,8 +137,11 @@ const put = async (req, res, next) => {
       data: blog,
     });
 
+    formatData(blog)
+
     res.status(200).json({
       message: "SUCCESS REPLACE ALL BLOG DATA",
+      data: blog
     });
   } catch (error) {
     next(error);
@@ -167,6 +174,9 @@ const updateTitle = async (req, res, next) => {
       where: { id },
       data: { title },
     });
+
+    formatData(currentBlog)
+
     res.status(200).json({
       message: `UPDATE TITLE BLOG ID ${id} SUCCESSFUL`,
       data: updateTitle,

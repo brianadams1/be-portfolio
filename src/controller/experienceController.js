@@ -8,13 +8,17 @@ import dayjs from "dayjs";
 const formatData = (e) => {
   const startDate = e.startDate;
 
-  e.readStartDateTime = dayjs(startDate).format("DD MMMM YYYY HH:MM A");
-  e.shortenStartDateTime = dayjs(startDate).format("D MMM YYYY HH:MM A");
+  e.readStartDateTime = dayjs(startDate).format("MMM YYYY");
+  e.shortenStartDateTime = dayjs(startDate).format("MMM YYYY");
   console.log(e.readStartDateTime);
-  const endDate = e.endDate;
+  if (e.endDate) {
+    const endDate = e.endDate;
 
-  e.readEndDateTime = dayjs(endDate).format("DD MMMM YYYY HH:MM A");
-  e.shortenEndDateTime = dayjs(endDate).format("D MMM YYYY HH:MM A");
+    e.readEndDateTime = dayjs(endDate).format("MMM YYYY");
+    e.shortenEndDateTime = dayjs(endDate).format("MMM YYYY");
+  } else {
+    e.endDate = 'Present'
+  }
 };
 
 // GET ALL METHOD
@@ -52,6 +56,8 @@ const get = async (req, res, next) => {
     if (!experience)
       throw new ResponseError(404, `EXPERIENCE ${id} IS NOT FOUND`);
 
+    formatData(experience)
+
     res.status(200).json({
       message: "SUCCESS GET EXPERIENCE DATA BY ID " + id,
       data: experience,
@@ -69,6 +75,8 @@ const post = async (req, res, next) => {
 
     // POST THE DATA
     let newExperience = await Prisma.experience.create({ data: experience });
+
+    formatData(experience)
 
     // IF SUCCESS
     res.status(200).json({
@@ -105,6 +113,8 @@ const put = async (req, res, next) => {
       where: { id },
       data: experience,
     });
+
+    formatData(experience)
 
     res.status(200).json({
       message: "SUCCESS UPDATE EXPERIENCE DATA BY ID " + id,
