@@ -3,6 +3,14 @@ import { Validate } from "../app/validate.js";
 import { isID } from "../validation/mainValidation.js";
 import { isBlog, isBlogTitle } from "../validation/blogValidation.js";
 import { ResponseError } from "../error/responseError.js";
+import dayjs from "dayjs";
+
+const formatData = (blog) => {
+  const date = blog.createdAt;
+
+  blog.readDateTime = dayjs(date).format("DD MMMM YYYY HH:MM A");
+  blog.shortenDateTime = dayjs(date).format("D MMM YYYY HH:MM A");
+};
 
 // GETALL METHOD BLOGS
 const getAll = async (req, res, next) => {
@@ -42,6 +50,10 @@ const getByPage = async (page = 1, limit = 10) => {
     take: limit,
     skip,
   });
+
+  for (const blog of blogs) {
+    formatData(blog)
+  }
 
   // GET TOTAL DATA
   const total = await Prisma.blog.count();

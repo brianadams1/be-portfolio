@@ -3,6 +3,14 @@ import { Validate } from "../app/validate.js";
 import { isID } from "../validation/mainValidation.js";
 import { ResponseError } from "../error/responseError.js";
 import { isProject } from "../validation/projectValidation.js";
+import dayjs from "dayjs";
+
+const formatData = (p) => {
+  const date = p.startDate;
+
+  p.readDateTime = dayjs(date).format("DD MMMM YYYY HH:MM A");
+  p.shortenDateTime = dayjs(date).format("D MMM YYYY HH:MM A");
+};
 
 // GET ALL METHOD
 const getAll = async (req, res, next) => {
@@ -41,6 +49,10 @@ const getByPage = async (page, limit = 10) => {
     take: limit,
     skip,
   });
+
+  for (const p of projects) {
+    formatData(p);
+  }
 
   // GET TOTAL DATA
   const total = await Prisma.project.count();

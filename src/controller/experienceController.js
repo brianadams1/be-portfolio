@@ -3,11 +3,24 @@ import { Validate } from "../app/validate.js";
 import { ResponseError } from "../error/responseError.js";
 import { isExperience } from "../validation/experienceValidation.js";
 import { isID } from "../validation/mainValidation.js";
+import dayjs from "dayjs";
+
+const formatData = (e) => {
+  const startDate = e.startDate;
+
+  e.readStartDateTime = dayjs(startDate).format("DD MMMM YYYY HH:MM A");
+  e.shortenStartDateTime = dayjs(startDate).format("D MMM YYYY HH:MM A");
+  console.log(e.readStartDateTime);
+  const endDate = e.endDate;
+
+  e.readEndDateTime = dayjs(endDate).format("DD MMMM YYYY HH:MM A");
+  e.shortenEndDateTime = dayjs(endDate).format("D MMM YYYY HH:MM A");
+};
 
 // GET ALL METHOD
 const getAll = async (req, res, next) => {
   try {
-    let experiences = getExperiences();
+    let experiences = await getExperiences();
 
     res.status(200).json({
       message: "SUCCESS GET ALL EXPERIENCE DATA",
@@ -19,7 +32,11 @@ const getAll = async (req, res, next) => {
 };
 
 const getExperiences = async (req, res, next) => {
-  return await Prisma.experience.findMany();
+  const exp = await Prisma.experience.findMany();
+  for (const e of exp) {
+    formatData(e);
+  }
+  return exp;
 };
 
 const get = async (req, res, next) => {
