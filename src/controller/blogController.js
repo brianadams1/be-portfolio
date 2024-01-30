@@ -51,6 +51,7 @@ const getByPage = async (page = 1, limit = 10) => {
     take: limit,
     skip,
     orderBy: { createdAt: "desc" },
+    include: {photos: true}
   });
 
   for (const blog of blogs) {
