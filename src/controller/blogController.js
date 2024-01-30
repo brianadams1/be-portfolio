@@ -94,28 +94,30 @@ const get = async (req, res, next) => {
   }
 };
 
+const getUploadedPhotos = (req) => {
+  const photos = [];
+  if (req.files) {
+    // HANDLE UPLOAD PHOTOS
+    // LOOP
+    for (const f of req.files) {
+      // FIX PATH, ADD SLASH
+      let photo = "/" + f.path.replaceAll("\\", "/");
+
+      // CREATE PHOTO OBJECT BASED ON PRISMA SCHEMA
+      photo = {
+        path: photo,
+      };
+
+      photos.push(photo);
+    }
+  }
+  return photos;
+};
+
 // POST METHOD BLOGS
 const post = async (req, res, next) => {
   try {
-    // to loot photos paths
-    const photos = [];
-
-    if (req.files) {
-      // HANDLE UPLOAD PHOTOS
-      // LOOP
-      for (const f of req.files) {
-        // FIX PATH, ADD SLASH
-        let photo = "/" + f.path.replaceAll("\\", "/");
-
-        // CREATE PHOTO OBJECT BASED ON PRISMA SCHEMA
-        photo = {
-          path: photo,
-        };
-
-        photos.push(photo);
-      }
-    }
-
+    const photos = getUploadedPhotos(req);
     let blog = req.body;
     // JOI VALIDATE BLOG
     blog = Validate(isBlog, blog);
@@ -158,11 +160,6 @@ const put = async (req, res, next) => {
     if (!currentBlog)
       throw new ResponseError(404, `Blog with ID ${id} is not found`);
 
-    console.log("currentBlog===");
-    console.log(currentBlog);
-    console.log("blog===");
-    console.log(blog);
-
     // GET EXISTING PHOTO IDs
     const currentPhotos = currentBlog.photos.map((p) => p.id);
     const keptPhotos = blog.photos || []; // EMPTY ARRAY DEFAULT IF THIS IS NOT MOUNTED
@@ -173,15 +170,8 @@ const put = async (req, res, next) => {
     // hapus property photos dari blog
     delete blog.photos;
 
-    // PHOTOS THAT ARE NOT DELETED
-    console.log("keptPhotos====");
-    console.log(keptPhotos);
-    console.log("keepPhotos====");
-    console.log(keepPhotos);
-    console.log("data blog yg mau disimpan");
-    console.log(blog);
-
-    // TODO simpan foto baru
+    //  simpan foto baru
+    const newPhotos = getUploadedPhotos(req);
 
     const update = await Prisma.blog.update({
       where: { id },
@@ -193,6 +183,7 @@ const put = async (req, res, next) => {
               notIn: keepPhotos,
             },
           },
+          create: newPhotos,
         },
       },
       include: { photos: true },
@@ -203,7 +194,7 @@ const put = async (req, res, next) => {
     res.status(200).json({
       message: "SUCCESS REPLACE ALL BLOG DATA",
       data: { blog },
-      include: {photos: true}
+      include: { photos: true },
     });
   } catch (error) {
     if (req.files) {
