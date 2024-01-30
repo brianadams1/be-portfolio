@@ -17,4 +17,6 @@ export const isProject = Joi.object({
   github: isURI.label("Github").allow(null, ""),
   gitlab: isURI.label("Github").allow(null, ""),
   company: isString100.label("Company").allow(null, ""),
+  photos: Joi.array().items(Joi.number())
+
 });

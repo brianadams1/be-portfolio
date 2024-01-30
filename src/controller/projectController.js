@@ -4,6 +4,7 @@ import { isID } from "../validation/mainValidation.js";
 import { ResponseError } from "../error/responseError.js";
 import { isProject } from "../validation/projectValidation.js";
 import dayjs from "dayjs";
+import fileService from "../service/fileService.js";
 
 const formatData = (p) => {
   const date = p.startDate;
@@ -56,6 +57,7 @@ const getByPage = async (page, limit = 10) => {
   let projects = await Prisma.project.findMany({
     take: limit,
     skip,
+    orderBy: {startDate: 'desc'}
   });
 
   for (const p of projects) {
@@ -96,15 +98,19 @@ const get = async (req, res, next) => {
 const post = async (req, res, next) => {
   try {
     // GET PROJECT INPUT DATA
+    const photos = fileService.getUploadedPhotos(req);
     let project = req.body;
 
     // VALIDATE
     project = Validate(isProject, project);
 
     // POST THE DATAS
-    let newProject = await Prisma.project.create({ data: project });
+    let newProject = await Prisma.project.create({
+      data: { ...project, photos: { create: photos } },
+      include: { photos: true },
+    });
 
-    formatData(project);
+    formatData(newProject);
 
     // IF SUCCESS
     res.status(200).json({
@@ -112,6 +118,12 @@ const post = async (req, res, next) => {
       data: newProject,
     });
   } catch (error) {
+    if (req.files) {
+      // DELETE FILE IF ERROR OCCURED
+      for (const f of req.files) {
+        await fileService.removeFile(f.path);
+      }
+    }
     next(error);
   }
 };
@@ -130,17 +142,41 @@ const put = async (req, res, next) => {
     // SEARCH WANTED PROJECT
     let currentProject = await Prisma.project.findUnique({
       where: { id },
-      select: { id: true },
+      include: { photos: true },
     });
 
     // IF PROJECT IS UNAVAILABLE
     if (!currentProject)
       throw new ResponseError(404, `PROJECT ${id} IS NOT FOUND`);
 
+    // GET EXISTING PHOTO IDs
+    const currentPhotos = currentProject.photos.map((p) => p.id);
+    const keptPhotos = project.photos || []; // EMPTY ARRAY DEFAULT IF THIS IS NOT MOUNTED
+
+    // FILTERING KEPT PHOTOS
+    const keepPhotos = currentPhotos.filter((p) => keptPhotos.includes(p));
+
+    // hapus property photos dari blog
+    delete project.photos;
+
+    //  simpan foto baru
+    const newPhotos = fileService.getUploadedPhotos(req);
+
     // UPDATE THE PROJECT
     const update = await Prisma.project.update({
       where: { id },
-      data: project,
+      data: {
+        ...project,
+        photos: {
+          deleteMany: {
+            id: {
+              notIn: keepPhotos,
+            },
+          },
+          create: newPhotos,
+        },
+      },
+      include: { photos: true },
     });
 
     formatData(project);
@@ -150,6 +186,12 @@ const put = async (req, res, next) => {
       data: project,
     });
   } catch (error) {
+    if (req.files) {
+      // DELETE FILE IF ERROR OCCURED
+      for (const f of req.files) {
+        await fileService.removeFile(f.path);
+      }
+    }
     next(error);
   }
 };
