@@ -1,7 +1,5 @@
 import fs from "fs/promises";
 import multer from "multer";
-
-
 const createUploads = async (folderName) => {
   try {
     // try access folder
@@ -11,7 +9,6 @@ const createUploads = async (folderName) => {
     await fs.mkdir(folderName);
   }
 };
-
 const removeFile = async (file) => {
   try {
     // delete execution
@@ -22,7 +19,6 @@ const removeFile = async (file) => {
     console.log("error deleting data")
   }
 };
-
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, "./uploads");
@@ -38,7 +34,26 @@ const storage = multer.diskStorage({
     cb(null, `${file.fieldname}-${uniqueSuffix}.${ext}`);
   },
 });
-
 const upload = multer({ storage: storage });
 
-export default { removeFile, createUploads, upload };
+const getUploadedPhotos = (req) => {
+  const photos = [];
+  if (req.files) {
+    // HANDLE UPLOAD PHOTOS
+    // LOOP
+    for (const f of req.files) {
+      // FIX PATH, ADD SLASH
+      let photo = "/" + f.path.replaceAll("\\", "/");
+
+      // CREATE PHOTO OBJECT BASED ON PRISMA SCHEMA
+      photo = {
+        path: photo,
+      };
+
+      photos.push(photo);
+    }
+  }
+  return photos;
+};
+
+export default { removeFile, createUploads, upload, getUploadedPhotos };

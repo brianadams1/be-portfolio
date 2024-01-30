@@ -51,7 +51,7 @@ const getByPage = async (page = 1, limit = 10) => {
     take: limit,
     skip,
     orderBy: { createdAt: "desc" },
-    include: {photos: true}
+    include: { photos: true },
   });
 
   for (const blog of blogs) {
@@ -95,30 +95,10 @@ const get = async (req, res, next) => {
   }
 };
 
-const getUploadedPhotos = (req) => {
-  const photos = [];
-  if (req.files) {
-    // HANDLE UPLOAD PHOTOS
-    // LOOP
-    for (const f of req.files) {
-      // FIX PATH, ADD SLASH
-      let photo = "/" + f.path.replaceAll("\\", "/");
-
-      // CREATE PHOTO OBJECT BASED ON PRISMA SCHEMA
-      photo = {
-        path: photo,
-      };
-
-      photos.push(photo);
-    }
-  }
-  return photos;
-};
-
 // POST METHOD BLOGS
 const post = async (req, res, next) => {
   try {
-    const photos = getUploadedPhotos(req);
+    const photos = fileService.getUploadedPhotos(req);
     let blog = req.body;
     // JOI VALIDATE BLOG
     blog = Validate(isBlog, blog);
@@ -172,7 +152,7 @@ const put = async (req, res, next) => {
     delete blog.photos;
 
     //  simpan foto baru
-    const newPhotos = getUploadedPhotos(req);
+    const newPhotos = fileService.getUploadedPhotos(req);
 
     const update = await Prisma.blog.update({
       where: { id },
@@ -195,7 +175,6 @@ const put = async (req, res, next) => {
     res.status(200).json({
       message: "SUCCESS REPLACE ALL BLOG DATA",
       data: { blog },
-      include: { photos: true },
     });
   } catch (error) {
     if (req.files) {
