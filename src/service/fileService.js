@@ -1,4 +1,6 @@
 import fs from "fs/promises";
+import multer from "multer";
+
 
 const createUploads = async (folderName) => {
   try {
@@ -21,4 +23,22 @@ const removeFile = async (file) => {
   }
 };
 
-export default { removeFile, createUploads };
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "./uploads");
+  },
+  filename: function (req, file, cb) {
+    // date + random number
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+
+    // get file extension
+    const ext = file.originalname.split(".").pop();
+
+    // create file name
+    cb(null, `${file.fieldname}-${uniqueSuffix}.${ext}`);
+  },
+});
+
+const upload = multer({ storage: storage });
+
+export default { removeFile, createUploads, upload };
