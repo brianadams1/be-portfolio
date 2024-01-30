@@ -4,6 +4,7 @@ import { isID } from "../validation/mainValidation.js";
 import { isBlog, isBlogTitle } from "../validation/blogValidation.js";
 import { ResponseError } from "../error/responseError.js";
 import dayjs from "dayjs";
+import fileService from "../service/fileService.js";
 
 const formatData = (blog) => {
   const date = blog.createdAt;
@@ -53,7 +54,7 @@ const getByPage = async (page = 1, limit = 10) => {
   });
 
   for (const blog of blogs) {
-    formatData(blog)
+    formatData(blog);
   }
 
   // GET TOTAL DATA
@@ -72,11 +73,14 @@ const get = async (req, res, next) => {
     id = Validate(isID, id);
 
     // START: CHECK BLOG EXISTENCE
-    const blog = await Prisma.blog.findUnique({ where: { id } });
+    const blog = await Prisma.blog.findUnique({
+      where: { id },
+      include: { photos: true },
+    });
     // HANDLE NOT FOUND
     if (blog == null) throw new ResponseError(404, `NO DATA BLOG ${id}`);
 
-    formatData(blog)
+    formatData(blog);
 
     // HANDLE FOUND
     res.status(200).json({
@@ -93,16 +97,37 @@ const get = async (req, res, next) => {
 // POST METHOD BLOGS
 const post = async (req, res, next) => {
   try {
+    // to loot photos paths
+    const photos = [];
+
+    if (req.files) {
+      // HANDLE UPLOAD PHOTOS
+      // LOOP
+      for (const f of req.files) {
+        // FIX PATH, ADD SLASH
+        let photo = "/" + f.path.replaceAll("\\", "/");
+
+        // CREATE PHOTO OBJECT BASED ON PRISMA SCHEMA
+        photo = {
+          path: photo,
+        };
+
+        photos.push(photo);
+      }
+    }
+
     let blog = req.body;
     // JOI VALIDATE BLOG
     blog = Validate(isBlog, blog);
 
+    // CREATE BLOG AND PHOTOS
     const newBlog = await Prisma.blog.create({
-      data: blog,
+      data: { ...blog, photos: { create: photos } },
+      include: { photos: true },
     });
 
-    formatData(newBlog)
-    
+    formatData(newBlog);
+
     res.status(200).json({
       message: "SUCCESS POST NEW BLOG",
       data: newBlog,
@@ -127,24 +152,66 @@ const put = async (req, res, next) => {
     // check if current blog is available
     const currentBlog = await Prisma.blog.findUnique({
       where: { id },
-      select: { id: true },
+      include: { photos: true },
     });
 
     if (!currentBlog)
       throw new ResponseError(404, `Blog with ID ${id} is not found`);
 
+    console.log("currentBlog===");
+    console.log(currentBlog);
+    console.log("blog===");
+    console.log(blog);
+
+    // GET EXISTING PHOTO IDs
+    const currentPhotos = currentBlog.photos.map((p) => p.id);
+    const keptPhotos = blog.photos || []; // EMPTY ARRAY DEFAULT IF THIS IS NOT MOUNTED
+
+    // FILTERING KEPT PHOTOS
+    const keepPhotos = currentPhotos.filter((p) => keptPhotos.includes(p));
+
+    // hapus property photos dari blog
+    delete blog.photos;
+
+    // PHOTOS THAT ARE NOT DELETED
+    console.log("keptPhotos====");
+    console.log(keptPhotos);
+    console.log("keepPhotos====");
+    console.log(keepPhotos);
+    console.log("data blog yg mau disimpan");
+    console.log(blog);
+
+    // TODO simpan foto baru
+
     const update = await Prisma.blog.update({
       where: { id },
-      data: blog,
+      data: {
+        ...blog,
+        photos: {
+          deleteMany: {
+            id: {
+              notIn: keepPhotos,
+            },
+          },
+        },
+      },
+      include: { photos: true },
     });
 
-    formatData(blog)
+    formatData(blog);
 
     res.status(200).json({
       message: "SUCCESS REPLACE ALL BLOG DATA",
-      data: blog
+      data: { blog },
+      include: {photos: true}
     });
   } catch (error) {
+    if (req.files) {
+      // DELETE FILE IF ERROR OCCURED
+      for (const f of req.files) {
+        await fileService.removeFile(f.path);
+      }
+    }
     next(error);
   }
 };
@@ -176,7 +243,7 @@ const updateTitle = async (req, res, next) => {
       data: { title },
     });
 
-    formatData(currentBlog)
+    formatData(currentBlog);
 
     res.status(200).json({
       message: `UPDATE TITLE BLOG ID ${id} SUCCESSFUL`,

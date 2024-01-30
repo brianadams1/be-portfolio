@@ -7,6 +7,7 @@ const isBlogContent = Joi.string().min(3).required().label("Content")
 const isBlog = Joi.object({
     title: isBlogTitle,
     content: isBlogContent,
+    photos: Joi.array().items(Joi.number())
   });
 
 export {
