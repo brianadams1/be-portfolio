@@ -58,7 +58,7 @@ const getByPage = async (page, limit = 10) => {
     take: limit,
     skip,
     orderBy: { startDate: "desc" },
-    include: { photos: true },
+    include: { photos: true, skills: {include: {Skill: true}} },
   });
 
   for (const p of projects) {
@@ -81,7 +81,7 @@ const get = async (req, res, next) => {
     // FIND PROJECT BY ID
     let project = await Prisma.project.findUnique({
       where: { id },
-      include: { photos: true },
+      include: { photos: true, skills: {include: {Skill: true}} },
     });
 
     // IF WANTED PROJECT IS NOT FOUND, THROW ERROR
@@ -90,7 +90,7 @@ const get = async (req, res, next) => {
     formatData(project);
 
     res.status(200).json({
-      message: "SUCCESS GET PROJECT DATA BY ID" + id,
+      message: "SUCCESS GET PROJECT DATA BY ID " + id,
       data: project,
     });
   } catch (error) {
@@ -120,7 +120,7 @@ const post = async (req, res, next) => {
         photos: { create: photos },
         skills: { createMany: { data: skills } },
       },
-      include: { photos: true, skills: true },
+      include: { photos: true, skills: {include: {Skill: true}} },
     });
 
     formatData(newProject);
