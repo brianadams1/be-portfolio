@@ -57,8 +57,8 @@ const getByPage = async (page, limit = 10) => {
   let projects = await Prisma.project.findMany({
     take: limit,
     skip,
-    orderBy: {startDate: 'desc'},
-    include: {photos:true}
+    orderBy: { startDate: "desc" },
+    include: { photos: true },
   });
 
   for (const p of projects) {
@@ -79,7 +79,10 @@ const get = async (req, res, next) => {
     id = Validate(isID, id);
 
     // FIND PROJECT BY ID
-    let project = await Prisma.project.findUnique({ where: { id }, include: {photos: true} });
+    let project = await Prisma.project.findUnique({
+      where: { id },
+      include: { photos: true },
+    });
 
     // IF WANTED PROJECT IS NOT FOUND, THROW ERROR
     if (!project) throw new ResponseError(404, `PROJECT ${id} IS NOT FOUND`);
@@ -105,10 +108,19 @@ const post = async (req, res, next) => {
     // VALIDATE
     project = Validate(isProject, project);
 
+    // [{skillId: 5, skillId:6}]
+    const skills = project.skills.map((s) => {
+      return { skillId: s };
+    });
+
     // POST THE DATAS
     let newProject = await Prisma.project.create({
-      data: { ...project, photos: { create: photos } },
-      include: { photos: true },
+      data: {
+        ...project,
+        photos: { create: photos },
+        skills: { createMany: { data: skills } },
+      },
+      include: { photos: true, skills: true },
     });
 
     formatData(newProject);
