@@ -19,6 +19,9 @@ const formatData = (p) => {
   } else {
     p.readEndDateTime = "Present";
   }
+
+  const skills = p.skills.map((ps) => ps.Skill);
+  p.skills = skills;
 };
 
 // GET ALL METHOD
@@ -58,7 +61,7 @@ const getByPage = async (page, limit = 10) => {
     take: limit,
     skip,
     orderBy: { startDate: "desc" },
-    include: { photos: true, skills: {include: {Skill: true}} },
+    include: { photos: true, skills: { include: { Skill: true } } },
   });
 
   for (const p of projects) {
@@ -81,7 +84,7 @@ const get = async (req, res, next) => {
     // FIND PROJECT BY ID
     let project = await Prisma.project.findUnique({
       where: { id },
-      include: { photos: true, skills: {include: {Skill: true}} },
+      include: { photos: true, skills: { include: { Skill: true } } },
     });
 
     // IF WANTED PROJECT IS NOT FOUND, THROW ERROR
@@ -120,7 +123,7 @@ const post = async (req, res, next) => {
         photos: { create: photos },
         skills: { createMany: { data: skills } },
       },
-      include: { photos: true, skills: {include: {Skill: true}} },
+      include: { photos: true, skills: { include: { Skill: true } } },
     });
 
     formatData(newProject);
@@ -147,7 +150,6 @@ const put = async (req, res, next) => {
     // GET ID AND VALIDATE
     let id = req.params.id;
     id = Validate(isID, id);
-
     // GET PROJECT FROM INPUT AND VALIDATE
     let project = req.body;
     project = Validate(isProject, project);
@@ -175,6 +177,12 @@ const put = async (req, res, next) => {
     //  simpan foto baru
     const newPhotos = fileService.getUploadedPhotos(req);
 
+    const skills = project.skills.map((s) => {
+      return { skillId: s };
+    });
+
+    delete project.skills;
+
     // UPDATE THE PROJECT
     const update = await Prisma.project.update({
       where: { id },
@@ -188,15 +196,19 @@ const put = async (req, res, next) => {
           },
           create: newPhotos,
         },
+        skills: {
+          deleteMany: {},
+          createMany: { data: skills },
+        },
       },
-      include: { photos: true },
+      include: { photos: true, skills: { include: { Skill: true } } },
     });
 
-    formatData(project);
+    formatData(update);
 
     res.status(200).json({
       message: "SUCCESS UPDATE PROJECT DATA BY ID",
-      data: project,
+      data: update,
     });
   } catch (error) {
     if (req.files) {
