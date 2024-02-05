@@ -94,7 +94,7 @@ const portfolio = async (req, res, next) => {
     // TAKE SKILL DATA BY CATEGORY
     const skills = await skillController.handleSkillByCategory();
     // TAKE BLOG DATA
-    const { blogs } = await blogController.getByPage();
+    const { blogs } = await blogController.getByPage(1, 4);
 
     // CALCULATE PROJECT AMOUNT
     profile.project_count = projects.length;
@@ -106,15 +106,12 @@ const portfolio = async (req, res, next) => {
     profile.month_of_exp = dayjs().diff(firstProjectDate, "month");
 
     res.status(200).json({
-      message: "SUCCESS GET PORTFOLIO DATA",
-      data: {
-        profile,
-        projects,
-        experience,
-        skills,
-        educations,
-        blogs,
-      },
+      profile,
+      projects,
+      experience,
+      skills,
+      educations,
+      blogs,
     });
   } catch (error) {
     next(error);

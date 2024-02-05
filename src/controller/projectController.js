@@ -92,10 +92,7 @@ const get = async (req, res, next) => {
 
     formatData(project);
 
-    res.status(200).json({
-      message: "SUCCESS GET PROJECT DATA BY ID " + id,
-      data: project,
-    });
+    res.status(200).json(project);
   } catch (error) {
     next(error);
   }
@@ -170,16 +167,21 @@ const put = async (req, res, next) => {
 
     // FILTERING KEPT PHOTOS
     const keepPhotos = currentPhotos.filter((p) => keptPhotos.includes(p));
+    const photos_to_be_removed = currentProject.photos.filter((i) =>
+      keptPhotos.includes(i)
+    );
 
     // hapus property photos dari blog
     delete project.photos;
 
     //  simpan foto baru
     const newPhotos = fileService.getUploadedPhotos(req);
-
-    const skills = project.skills.map((s) => {
-      return { skillId: s };
-    });
+    let skills = [];
+    if (project.skills) {
+      skills = project.skills.map((s) => {
+        return { skillId: s };
+      });
+    }
 
     delete project.skills;
 
@@ -197,12 +199,16 @@ const put = async (req, res, next) => {
           create: newPhotos,
         },
         skills: {
-          deleteMany: {},
+          deleteMany: {},   
           createMany: { data: skills },
         },
       },
       include: { photos: true, skills: { include: { Skill: true } } },
     });
+
+    for(const p of photos_to_be_removed){
+      await fileService.removeFile(p.path)
+    }
 
     formatData(update);
 
@@ -231,12 +237,16 @@ const remove = async (req, res, next) => {
     // CHECK IF CERTAIN PROJECT IS EXIST
     let project = await Prisma.project.findUnique({
       where: { id },
-      select: { id: true },
+      include: {photos: true},
     });
 
     // IF THE PROJECT IS NOT FOUND
     if (!project) throw new ResponseError(404, `Project ${id} is not found`);
 
+    for(const p of project.photos)
+    {
+      await fileService.removeFile(p.path)
+    }
     // IF FOUND, DELETE EXECUTION
     const deleteProject = await Prisma.blog.delete({ where: { id } });
 

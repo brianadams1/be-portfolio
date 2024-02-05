@@ -29,7 +29,6 @@ const getAll = async (req, res, next) => {
     const maxPage = Math.ceil(total / limit);
 
     res.status(200).json({
-      message: "SUCCESS GET ALL DATA BLOG",
       data: blogs,
       page,
       total,
@@ -84,10 +83,7 @@ const get = async (req, res, next) => {
     formatData(blog);
 
     // HANDLE FOUND
-    res.status(200).json({
-      message: `SUCCESS GET BLOG DATA BY ID : ${id}`,
-      data: blog,
-    });
+    res.status(200).json(blog);
     // END: CHECK BLOG EXISTENCE
   } catch (error) {
     // IF SERVER IS DOWN
@@ -147,6 +143,9 @@ const put = async (req, res, next) => {
 
     // FILTERING KEPT PHOTOS
     const keepPhotos = currentPhotos.filter((p) => keptPhotos.includes(p));
+    const photos_to_be_removed = currentBlog.photos.filter((i) =>
+      keptPhotos.includes(i)
+    );
 
     // hapus property photos dari blog
     delete blog.photos;
@@ -169,6 +168,10 @@ const put = async (req, res, next) => {
       },
       include: { photos: true },
     });
+
+    for (const p of photos_to_be_removed) {
+      await fileService.removeFile(p.path);
+    }
 
     formatData(blog);
 
@@ -241,6 +244,10 @@ const remove = async (req, res, next) => {
 
     if (!currentBlog)
       throw new ResponseError(404, `Blog with ID ${id} is not found`);
+
+    for (const p of currentBlog.photos) {
+      await fileService.removeFile(p.path);
+    }
 
     // DELETE EXECUTION
     const deleteBlog = await Prisma.blog.delete({ where: { id } });
