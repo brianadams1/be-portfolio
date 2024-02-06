@@ -16,10 +16,7 @@ const get = async (req, res, next) => {
     const profile = await getProfile();
 
     // IF DATA IS EXIST, SEND DATA
-    res.status(200).json({
-      message: "SUCCESS GET PROFILE DATA",
-      data: profile,
-    });
+    res.status(200).json(profile);
   } catch (error) {
     next(error);
   }
@@ -64,10 +61,7 @@ const put = async (req, res, next) => {
       }
     }
 
-    res.status(200).json({
-      message: "DATAS HAS BEEN UPDATED",
-      data: dataProfile,
-    });
+    res.status(200).json(dataProfile);
   } catch (error) {
     // IF ERROR AND FILE IS EXIST, DELETE FILE
     if (req.file) fileService.removeFile(req.file.path);
