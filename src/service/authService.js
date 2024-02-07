@@ -9,15 +9,20 @@ const createToken = (res, email, age = process.env.SESSION_AGE) => {
   // const maxAge =  age ? age : process.env.SESSION_AGE;
   // const maxAge =  age ?? process.env.SESSION_AGE;
 
-
   let token = jwt.sign({ email }, jwtSecret, { expiresIn: age });
+  let maxAge = 24 * 60 * 60 * 1000;
   // SEND RES COOKIE
-  res.cookie("token", token);
+  let cookieConfig = {
+    httpOnly: true,
+    maxAge: maxAge,
+  };
+
+  res.cookie("token", token, cookieConfig);
   return token;
 };
 const updateUserToken = async (email, token) => {
   // DO PRISMA UPDATE AND RETURN USER DATA
- const user = await Prisma.user.update({
+  const user = await Prisma.user.update({
     where: { email },
     data: { token },
     select: { name: true, email: true },
