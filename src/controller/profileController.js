@@ -96,10 +96,17 @@ const portfolio = async (req, res, next) => {
     // CALCULATE EXPERIENCE YEAR > FIRST PROJECT STARTYEAR COMPARE TO NOW
     // IT SHOULD BE FIND FIRST, BUT THE OUTPUT BY STARTYEAR IS DESCENDED
     // SO THE FIRST PROJECT IS CHANGED TO LAST PROJECT, THEN USE FINDLAST
-    const firstProject = projects.findLast((p) => true);
-    const firstProjectDate = dayjs(firstProject.startDate);
-    profile.year_of_exp = dayjs().diff(firstProjectDate, "year");
-    profile.month_of_exp = dayjs().diff(firstProjectDate, "month");
+    if (projects.length) {
+      // IF PROJECT(S) EXIST
+      const firstProject = projects.findLast((p) => true);
+      const firstProjectDate = dayjs(firstProject.startDate);
+      profile.year_of_exp = dayjs().diff(firstProjectDate, "year");
+      profile.month_of_exp = dayjs().diff(firstProjectDate, "month");
+    } else {
+      // IF NOT EXIST
+      profile.year_of_exp = 0;
+      profile.month_of_exp = 0;
+    }
 
     res.status(200).json({
       profile,
