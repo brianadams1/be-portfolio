@@ -36,12 +36,7 @@ const login = async (req, res, next) => {
     // SEND USER-NEED DATA, put token
     const data = await authService.updateUserToken(email, token);
 
-    res.status(200).json({
-      message: "Logged in",
-      data: data,
-      checkPassword: checkPassword,
-      token: token,
-    });
+    res.status(200).json(data);
   } catch (error) {
     next(error);
   }
