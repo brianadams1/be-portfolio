@@ -5,6 +5,7 @@ import { loginValidation } from "../validation/authValidation.js";
 import bcrypt from "bcrypt";
 import dotenv from "dotenv";
 import authService from "../service/authService.js";
+import { isUser } from "../validation/userValidation.js";
 dotenv.config();
 
 // POST METHOD  LOGIN
@@ -82,5 +83,31 @@ const get = async (req, res, next) => {
     next(error);
   }
 };
+const put = async (req, res, next) => {
+  try {
+    // validate
+    let user = req.body;
+    user = Validate(isUser, user);
+    // remove confirm password
+    delete user.confirm_password;
+    // update password to hash
+    user.password = await bcrypt.hash(user.password, 10);
+    // find user
+    const currentUser = await Prisma.user.findFirstOrThrow();
 
-export default { login, logout, get };
+    const updateUser = await Prisma.user.update({
+      where: { email: currentUser.email },
+      data: user,
+      select: {
+        name: true,
+        email: true,
+      },
+    });
+
+    res.status(200).json(updateUser);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export default { login, logout, get, put };

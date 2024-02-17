@@ -59,10 +59,7 @@ const get = async (req, res, next) => {
 
     formatData(experience)
 
-    res.status(200).json({
-      message: "SUCCESS GET EXPERIENCE DATA BY ID " + id,
-      data: experience,
-    });
+    res.status(200).json(experience);
   } catch (error) {
     next(error);
   }
@@ -80,10 +77,7 @@ const post = async (req, res, next) => {
     formatData(experience)
 
     // IF SUCCESS
-    res.status(200).json({
-      message: "SUCCESS POST NEW EXPERIENCE",
-      data: newExperience,
-    });
+    res.status(200).json(experience);
   } catch (error) {
     next(error);
   }
@@ -117,10 +111,7 @@ const put = async (req, res, next) => {
 
     formatData(experience)
 
-    res.status(200).json({
-      message: "SUCCESS UPDATE EXPERIENCE DATA BY ID " + id,
-      data: experience,
-    });
+    res.status(200).json(experience);
   } catch (error) {
     next(error);
   }

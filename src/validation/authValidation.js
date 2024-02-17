@@ -1,10 +1,7 @@
-import Joi from "joi"
+import Joi from "joi";
+import { isEmail, isPassword } from "./mainValidation.js";
 
-const loginValidation = Joi.object({
-    email: Joi.string().email().label("Email"),
-    password: Joi.string().min(6).max(100).required().label("Password")
-    
-})
-export {
-    loginValidation
-}
+export const loginValidation = Joi.object({
+  email: isEmail,
+  password: isPassword
+});
