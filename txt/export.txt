@@ -1,0 +1,7 @@
+what to be needed when export to new device
+
+1. install MySQL
+2. install dependencies
+3. migrate prisma Database
+4. create prisma data(user & portfolio) 
+5. .env 
