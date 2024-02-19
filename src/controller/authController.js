@@ -1,11 +1,13 @@
 import { Prisma } from "../app/prisma.js";
 import { Validate } from "../app/validate.js";
 import { ResponseError } from "../error/responseError.js";
-import { loginValidation } from "../validation/authValidation.js";
+import {
+  loginValidation,
+  updateUserValidation,
+} from "../validation/authValidation.js";
 import bcrypt from "bcrypt";
 import dotenv from "dotenv";
 import authService from "../service/authService.js";
-import { isUser } from "../validation/userValidation.js";
 dotenv.config();
 
 // POST METHOD  LOGIN
@@ -87,13 +89,25 @@ const put = async (req, res, next) => {
   try {
     // validate
     let user = req.body;
-    user = Validate(isUser, user);
+    const currentUser = await Prisma.user.findFirstOrThrow();
+    user = Validate(updateUserValidation, user);
+
+    const checkPassword = await bcrypt.compare(
+      user.old_password,
+      currentUser.password
+    );
+
+    // jika password salah
+    if (!checkPassword)
+      throw new ResponseError(400, `Current password is invalid`);
+
     // remove confirm password
-    delete user.confirm_password;
+    delete user.password_confirm;
+    delete user.old_password;
     // update password to hash
     user.password = await bcrypt.hash(user.password, 10);
     // find user
-    const currentUser = await Prisma.user.findFirstOrThrow();
+    // let old_password;
 
     const updateUser = await Prisma.user.update({
       where: { email: currentUser.email },
