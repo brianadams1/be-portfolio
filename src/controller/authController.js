@@ -92,22 +92,24 @@ const put = async (req, res, next) => {
     const currentUser = await Prisma.user.findFirstOrThrow();
     user = Validate(updateUserValidation, user);
 
-    const checkPassword = await bcrypt.compare(
-      user.old_password,
-      currentUser.password
-    );
+    if (user.password) {
+      const checkPassword = await bcrypt.compare(
+        user.old_password,
+        currentUser.password
+      );
 
-    // jika password salah
-    if (!checkPassword)
-      throw new ResponseError(400, `Current password is invalid`);
+      // jika password salah
+      if (!checkPassword)
+        throw new ResponseError(400, `Current password is invalid`);
 
-    // remove confirm password
-    delete user.password_confirm;
-    delete user.old_password;
-    // update password to hash
-    user.password = await bcrypt.hash(user.password, 10);
-    // find user
-    // let old_password;
+      // remove confirm password
+      delete user.password_confirm;
+      delete user.old_password;
+      // update password to hash
+      user.password = await bcrypt.hash(user.password, 10);
+      // find user
+      // let old_password;
+    }
 
     const updateUser = await Prisma.user.update({
       where: { email: currentUser.email },
