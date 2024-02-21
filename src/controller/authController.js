@@ -100,7 +100,7 @@ const put = async (req, res, next) => {
 
       // jika password salah
       if (!checkPassword)
-        throw new ResponseError(400, `Current password is invalid`);
+        throw new ResponseError(400, `Old password is invalid`);
 
       // remove confirm password
       delete user.password_confirm;

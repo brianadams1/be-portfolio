@@ -1,7 +1,7 @@
 import { Prisma } from "../app/prisma.js";
 import { Validate } from "../app/validate.js";
-import { isProfile } from "../validation/profileValidation.js";
 import fileService from "../service/fileService.js";
+import { isCreateProfile, isUpdateProfile} from '../validation/profileValidation.js'
 import projectController from "./projectController.js";
 import blogController from "./blogController.js";
 import educationController from "./educationController.js";
@@ -38,14 +38,15 @@ const put = async (req, res, next) => {
     }
 
     // VALIDATE THE DATAS
-    datas = Validate(isProfile, datas);
 
     let dataProfile = {};
 
     // IF DATA IS EMPTY, CREATE NEW DATA FROM INPUT
     if (!profile) {
+      datas = Validate(isCreateProfile, datas);
       dataProfile = await Prisma.profile.create({ data: datas });
     } else {
+      datas = Validate(isUpdateProfile, datas);
       // IF EXIST, UPDATE
       dataProfile = await Prisma.profile.update({
         where: { email: profile.email },
@@ -123,7 +124,7 @@ const portfolio = async (req, res, next) => {
 
 const getProfile = async () => {
   let profile = await Prisma.profile.findFirst();
-
+  profile.dob = dayjs(profile.dob).format("DD MM YYYY");
   // IF DATA IS EMPTY, SEND DUMMY DATA
   if (!profile) {
     profile = {
