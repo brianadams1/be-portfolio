@@ -1,7 +1,10 @@
 import { Prisma } from "../app/prisma.js";
 import { Validate } from "../app/validate.js";
 import fileService from "../service/fileService.js";
-import { isCreateProfile, isUpdateProfile} from '../validation/profileValidation.js'
+import {
+  isCreateProfile,
+  isUpdateProfile,
+} from "../validation/profileValidation.js";
 import projectController from "./projectController.js";
 import blogController from "./blogController.js";
 import educationController from "./educationController.js";
@@ -124,7 +127,6 @@ const portfolio = async (req, res, next) => {
 
 const getProfile = async () => {
   let profile = await Prisma.profile.findFirst();
-  profile.dob = dayjs(profile.dob).format("DD MM YYYY");
   // IF DATA IS EMPTY, SEND DUMMY DATA
   if (!profile) {
     profile = {
@@ -136,7 +138,10 @@ const getProfile = async () => {
       city: "-",
       country: "-",
       job: "-",
+      phone: "-",
     };
+  } else {
+    profile.dob = dayjs(profile.dob).format("DD MM YYYY");
   }
   return profile;
 };

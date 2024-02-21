@@ -1,11 +1,11 @@
 import Joi from "joi";
-import { isString100, isString255, isText, isURI } from "./mainValidation.js";
+import { isString100,  isText, isURI } from "./mainValidation.js";
 
 const nonRequired = {
   avatar: Joi.string().max(255).optional().label("Avatar"),
   bio: isText.label("Bio").allow(null, ""),
   website: isURI.label("Website").allow(null, ""),
-  github: isURI.label("Gihub").allow(null, ""),
+  github: isURI.label("Github").allow(null, ""),
   gitlab: isURI.label("Gitlab").allow(null, ""),
   instagram: isURI.label("Instagram").allow(null, ""),
   facebook: isURI.label("Facebook").allow(null, ""),
