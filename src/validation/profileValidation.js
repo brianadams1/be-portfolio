@@ -1,5 +1,5 @@
 import Joi from "joi";
-import { isString100, isString255, isText, isURI } from "./mainValidation.js";
+import { isString100,  isText, isURI } from "./mainValidation.js";
 
 const nonRequired = {
   avatar: Joi.string().max(255).optional().label("Avatar"),
