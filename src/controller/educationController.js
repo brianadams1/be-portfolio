@@ -8,10 +8,7 @@ import { isID } from "../validation/mainValidation.js";
 const getAll = async (req, res, next) => {
   try {
     const data = await getEducations();
-    res.status(200).json({
-      message: "SUCCESS GET ALL EDUCATIONS",
-      data,
-    });
+    res.status(200).json(data);
   } catch (error) {
     next(error);
   }
@@ -34,10 +31,7 @@ const get = async (req, res, next) => {
     if (education == null)
       throw new ResponseError(404, `NO DATA EDUCATION : ${id}`);
 
-    res.status(200).json({
-      message: `SUCCESS GET EDUCATION DATA BY ID :  ${id}`,
-      data: education,
-    });
+    res.status(200).json(education);
   } catch (error) {
     next(error);
   }
@@ -49,14 +43,9 @@ const post = async (req, res, next) => {
     let education = req.body;
     education = Validate(isEducation, education);
 
-    const newEducation = await Prisma.education.create({
-      data: education,
-    });
+    await Prisma.education.create({ data: education });
 
-    res.status(200).json({
-      message: "SUCCESS POST NEW EDUCATION",
-      data: newEducation,
-    });
+    res.status(200).json(education);
   } catch (error) {
     next(error);
   }
@@ -83,10 +72,7 @@ const put = async (req, res, next) => {
       data: education,
     });
 
-    res.status(200).json({
-      message: "SUCCESS REPLACE ALL EDUCATION DATA",
-      data: education,
-    });
+    res.status(200).json(education);
   } catch (error) {
     next(error);
   }
