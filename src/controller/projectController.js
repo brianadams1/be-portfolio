@@ -39,8 +39,7 @@ const getAll = async (req, res, next) => {
     const maxPage = Math.ceil(total / limit);
 
     res.status(200).json({
-      message: "SUCCESS GET ALL PROJECTS DATA",
-      data: projects,
+      projects,
       page,
       total,
       limit,
@@ -199,15 +198,15 @@ const put = async (req, res, next) => {
           create: newPhotos,
         },
         skills: {
-          deleteMany: {},   
+          deleteMany: {},
           createMany: { data: skills },
         },
       },
       include: { photos: true, skills: { include: { Skill: true } } },
     });
 
-    for(const p of photos_to_be_removed){
-      await fileService.removeFile(p.path)
+    for (const p of photos_to_be_removed) {
+      await fileService.removeFile(p.path);
     }
 
     formatData(update);
@@ -237,15 +236,14 @@ const remove = async (req, res, next) => {
     // CHECK IF CERTAIN PROJECT IS EXIST
     let project = await Prisma.project.findUnique({
       where: { id },
-      include: {photos: true},
+      include: { photos: true },
     });
 
     // IF THE PROJECT IS NOT FOUND
     if (!project) throw new ResponseError(404, `Project ${id} is not found`);
 
-    for(const p of project.photos)
-    {
-      await fileService.removeFile(p.path)
+    for (const p of project.photos) {
+      await fileService.removeFile(p.path);
     }
     // IF FOUND, DELETE EXECUTION
     const deleteProject = await Prisma.blog.delete({ where: { id } });

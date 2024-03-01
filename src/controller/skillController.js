@@ -8,11 +8,15 @@ import { isSkill } from "../validation/skillValidation.js";
 // GET METHOD SKILLS
 const getAll = async (req, res, next) => {
   try {
-    const data = await Prisma.skill.findMany({ include: { category: true } });
-    res.status(200).json({
-      message: "SUCCESS GET ALL SKILL DATAS",
-      data: data,
+    const data = await Prisma.skill.findMany({
+      include: {
+        category: true,
+        _count: {
+          select: { projects: true },
+        },
+      },
     });
+    res.status(200).json(data);
   } catch (error) {
     next(error);
   }
@@ -20,19 +24,16 @@ const getAll = async (req, res, next) => {
 
 const getSkillByCategory = async (req, res, next) => {
   try {
-    const data = await handleSkillByCategory()
+    const data = await handleSkillByCategory();
 
-    res.status(200).json({
-      message: "SUCCESS GET SKILL BY CATEGORY",
-      data,
-    });
+    res.status(200).json(data);
   } catch (error) {
     next(error);
   }
 };
 
 const handleSkillByCategory = async () => {
-  return  await Prisma.skillCategory.findMany({
+  return await Prisma.skillCategory.findMany({
     include: {
       skill: {
         orderBy: { title: "asc" },
@@ -40,22 +41,19 @@ const handleSkillByCategory = async () => {
     },
     orderBy: { title: "asc" },
   });
-}
+};
 
 // GET SKILL BY ID
 const get = async (req, res, next) => {
   try {
     let id = req.params.id;
     id = Validate(isID, id);
-    let skill = await Prisma.skill.findUnique({
+    let data = await Prisma.skill.findUnique({
       where: { id },
       include: { category: true },
     });
-    if (!skill) throw new ResponseError(404, `NO SKILL DATA: ${id}`);
-    res.status(200).json({
-      message: "SUCCESS GET DATA SKILL",
-      data: skill,
-    });
+    if (!data) throw new ResponseError(404, `NO SKILL DATA: ${id}`);
+    res.status(200).json(data);
   } catch (error) {
     next(error);
   }
@@ -76,16 +74,13 @@ const post = async (req, res, next) => {
     // CREATE NEW SKILL
     const insertSkill = {
       title: skill.title,
-      skillCategoryId: id_category,
+      skillCategoryId: id_category, // kalo gaada dia bikin baru, kalo ada pake exist
       svg: skill.svg,
     };
 
     const dataSkill = await Prisma.skill.create({ data: insertSkill });
 
-    res.status(200).json({
-      message: "SUCCESS CREATE NEW SKILL",
-      data: dataSkill,
-    });
+    res.status(200).json(dataSkill);
   } catch (error) {
     next(error);
   }
@@ -119,6 +114,7 @@ const put = async (req, res, next) => {
     const update_skill = {
       title: skill.title,
       skillCategoryId: categoryId,
+      svg: skill.svg ? skill.svg : currentSkill.svg,
     };
 
     // UPDATE EXECUTION
@@ -131,10 +127,7 @@ const put = async (req, res, next) => {
     const previousSkillId = currentSkill.skillCategoryId;
     await skillService.remove_category(previousSkillId);
 
-    res.status(200).json({
-      message: "SUCCESS UPDATE SKILL",
-      data: updatedSkill,
-    });
+    res.status(200).json(updatedSkill);
   } catch (error) {
     next(error);
   }

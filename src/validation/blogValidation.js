@@ -8,6 +8,7 @@ const isBlog = Joi.object({
     title: isBlogTitle,
     content: isBlogContent,
     photos: Joi.array().items(Joi.number())
+    
   });
 
 export {

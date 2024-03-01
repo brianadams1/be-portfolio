@@ -8,17 +8,17 @@ import dayjs from "dayjs";
 const formatData = (e) => {
   const startDate = e.startDate;
 
-  e.readStartDateTime = dayjs(startDate).format("MMM YYYY");
-  e.shortenStartDateTime = dayjs(startDate).format("MMM YYYY");
+  e.readStartDateTime = dayjs(startDate).format("DD MMMM YYYY");
+  e.shortenStartDateTime = dayjs(startDate).format("DD MMMM YYYY");
   console.log(e.readStartDateTime);
   if (e.endDate) {
     const endDate = e.endDate;
 
-    e.readEndDateTime = dayjs(endDate).format("MMM YYYY");
-    e.shortenEndDateTime = dayjs(endDate).format("MMM YYYY");
+    e.readEndDateTime = dayjs(endDate).format("DD MMMM YYYY");
+    e.shortenEndDateTime = dayjs(endDate).format("DD MMMM YYYY");
   } else {
-    e.readEndDateTime = 'Present'
-    e.shortenEndDateTime = 'Present'
+    e.readEndDateTime = "Present";
+    e.shortenEndDateTime = "Present";
   }
 };
 
@@ -27,10 +27,7 @@ const getAll = async (req, res, next) => {
   try {
     let experiences = await getExperiences();
 
-    res.status(200).json({
-      message: "SUCCESS GET ALL EXPERIENCE DATA",
-      data: experiences,
-    });
+    res.status(200).json(experiences);
   } catch (error) {
     next(error);
   }
@@ -57,7 +54,7 @@ const get = async (req, res, next) => {
     if (!experience)
       throw new ResponseError(404, `EXPERIENCE ${id} IS NOT FOUND`);
 
-    formatData(experience)
+    formatData(experience);
 
     res.status(200).json(experience);
   } catch (error) {
@@ -74,10 +71,10 @@ const post = async (req, res, next) => {
     // POST THE DATA
     let newExperience = await Prisma.experience.create({ data: experience });
 
-    formatData(experience)
+    formatData(experience);
 
     // IF SUCCESS
-    res.status(200).json(experience);
+    res.status(200).json(newExperience);
   } catch (error) {
     next(error);
   }
@@ -109,9 +106,9 @@ const put = async (req, res, next) => {
       data: experience,
     });
 
-    formatData(experience)
+    formatData(experience);
 
-    res.status(200).json(experience);
+    res.status(200).json(update);
   } catch (error) {
     next(error);
   }

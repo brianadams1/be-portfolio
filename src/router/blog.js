@@ -12,5 +12,5 @@ routerBlogs.patch("/update_blog_title/:id", blogController.updateTitle);
 
 routerBlogs
   .route("/blog/:id")
-  .put(fileService.upload.array("photos", 10), blogController.put) // update by id
+  .put(fileService.upload.array("new_photos", 10), blogController.put) // update by id
   .delete(blogController.remove); // remove by id

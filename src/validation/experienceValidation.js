@@ -12,5 +12,5 @@ export const isExperience = Joi.object({
     .min(Joi.ref("startDate"))
     .max("now")
     .label("Start Date")
-    .allow(null, ""),
+    .allow(null),
 });

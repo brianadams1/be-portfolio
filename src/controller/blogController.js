@@ -29,7 +29,7 @@ const getAll = async (req, res, next) => {
     const maxPage = Math.ceil(total / limit);
 
     res.status(200).json({
-      data: blogs,
+      blogs,
       page,
       total,
       limit,
@@ -107,10 +107,7 @@ const post = async (req, res, next) => {
 
     formatData(newBlog);
 
-    res.status(200).json({
-      message: "SUCCESS POST NEW BLOG",
-      data: newBlog,
-    });
+    res.status(200).json(newBlog);
   } catch (error) {
     next(error);
   }
@@ -175,10 +172,7 @@ const put = async (req, res, next) => {
 
     formatData(blog);
 
-    res.status(200).json({
-      message: "SUCCESS REPLACE ALL BLOG DATA",
-      data: { blog },
-    });
+    res.status(200).json(blog);
   } catch (error) {
     if (req.files) {
       // DELETE FILE IF ERROR OCCURED
