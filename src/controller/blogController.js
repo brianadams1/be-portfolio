@@ -23,7 +23,10 @@ const getAll = async (req, res, next) => {
     // LIMIT
     const limit = Number(req.query.limit) || 10;
 
-    const { blogs, total } = await getByPage(page, limit);
+    // SEARCH
+    const search = req.query.search || "";
+
+    const { blogs, total } = await getByPage(page, limit, search);
 
     // GET MAX PAGE
     const maxPage = Math.ceil(total / limit);
@@ -41,12 +44,17 @@ const getAll = async (req, res, next) => {
 };
 
 // PAGINATION METHOD
-const getByPage = async (page = 1, limit = 10) => {
+const getByPage = async (page = 1, limit = 10, search = "") => {
   // CALCULATE SKIP
   const skip = (page - 1) * limit;
 
   // FIND ALL BLOGS
   let blogs = await Prisma.blog.findMany({
+    where: {
+      title: {
+        contains: search,
+      },
+    },
     take: limit,
     skip,
     orderBy: { createdAt: "desc" },
@@ -58,7 +66,13 @@ const getByPage = async (page = 1, limit = 10) => {
   }
 
   // GET TOTAL DATA
-  const total = await Prisma.blog.count();
+  const total = await Prisma.blog.count({
+    where: {
+      title: {
+        contains: search,
+      },
+    },
+  });
 
   return { blogs, total };
 };
