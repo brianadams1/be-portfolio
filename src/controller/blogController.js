@@ -247,12 +247,13 @@ const remove = async (req, res, next) => {
     // check if current blog is available
     const currentBlog = await Prisma.blog.findUnique({
       where: { id },
-      select: { id: true },
+
+      include: { photos: true },
     });
 
     if (!currentBlog)
       throw new ResponseError(404, `Blog with ID ${id} is not found`);
-
+    console.log(currentBlog);
     for (const p of currentBlog.photos) {
       await fileService.removeFile(p.path);
     }
@@ -263,6 +264,7 @@ const remove = async (req, res, next) => {
       message: `DELETE DATA WITH ID ${id} IS SUCCESSFUL`,
     });
   } catch (error) {
+    console.log(error);
     next(error);
   }
 };
