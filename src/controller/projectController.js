@@ -104,6 +104,8 @@ const post = async (req, res, next) => {
     const photos = fileService.getUploadedPhotos(req);
     let project = req.body;
 
+    if (!project.endDate) project.endDate = null;
+
     // VALIDATE
     project = Validate(isProject, project);
 
@@ -125,10 +127,7 @@ const post = async (req, res, next) => {
     formatData(newProject);
 
     // IF SUCCESS
-    res.status(200).json({
-      message: "SUCCESS POST NEW PROJECT",
-      data: newProject,
-    });
+    res.status(200).json(newProject);
   } catch (error) {
     if (req.files) {
       // DELETE FILE IF ERROR OCCURED
@@ -153,7 +152,14 @@ const put = async (req, res, next) => {
     // SEARCH WANTED PROJECT
     let currentProject = await Prisma.project.findUnique({
       where: { id },
-      include: { photos: true },
+      include: {
+        photos: true,
+        skills: {
+          include: {
+            Skill: true,
+          },
+        },
+      },
     });
 
     // IF PROJECT IS UNAVAILABLE
@@ -166,8 +172,8 @@ const put = async (req, res, next) => {
 
     // FILTERING KEPT PHOTOS
     const keepPhotos = currentPhotos.filter((p) => keptPhotos.includes(p));
-    const photos_to_be_removed = currentProject.photos.filter((i) =>
-      keptPhotos.includes(i)
+    const photos_to_be_removed = currentProject.photos.filter(
+      (i) => !keptPhotos.includes(i)
     );
 
     // hapus property photos dari blog
@@ -211,10 +217,7 @@ const put = async (req, res, next) => {
 
     formatData(update);
 
-    res.status(200).json({
-      message: "SUCCESS UPDATE PROJECT DATA BY ID",
-      data: update,
-    });
+    res.status(200).json(update);
   } catch (error) {
     if (req.files) {
       // DELETE FILE IF ERROR OCCURED
@@ -246,7 +249,7 @@ const remove = async (req, res, next) => {
       await fileService.removeFile(p.path);
     }
     // IF FOUND, DELETE EXECUTION
-    const deleteProject = await Prisma.blog.delete({ where: { id } });
+    const deleteProject = await Prisma.project.delete({ where: { id } });
 
     res.status(200).json({
       message: "SUCCESS DELETE PROJECT DATA BY ID =" + id,
