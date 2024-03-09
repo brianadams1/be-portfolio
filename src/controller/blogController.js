@@ -160,8 +160,8 @@ const put = async (req, res, next) => {
 
     // FILTERING KEPT PHOTOS
     const keepPhotos = currentPhotos.filter((p) => keptPhotos.includes(p));
-    const photos_to_be_removed = currentBlog.photos.filter((i) =>
-      keptPhotos.includes(i)
+    const photos_to_be_removed = currentBlog.photos.filter(
+      (i) => !keptPhotos.includes(i.id)
     );
 
     // hapus property photos dari blog

@@ -173,7 +173,7 @@ const put = async (req, res, next) => {
     // FILTERING KEPT PHOTOS
     const keepPhotos = currentPhotos.filter((p) => keptPhotos.includes(p));
     const photos_to_be_removed = currentProject.photos.filter(
-      (i) => !keptPhotos.includes(i)
+      (p) => !keptPhotos.includes(p.id) //should insert id , id never known before
     );
 
     // hapus property photos dari blog

@@ -35,7 +35,12 @@ fileService.createUploads("./uploads");
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ PAGE_PATHING START ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // HANDLE CORS
-app.use(cors({ origin: ["http://localhost:3000", "http://localhost:3001"], credentials: true }));
+app.use(
+  cors({
+    origin: ["http://localhost:3000", "http://localhost:3001"],
+    credentials: true,
+  })
+);
 
 // SET STATIC FILE
 app.use("/uploads", express.static("./uploads"));
@@ -105,7 +110,7 @@ app.use(errorAgain);
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ PAGE_PATHING END ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 const port = process.env.PORT || 5000;
-console.info(port);
+
 app.listen(5000, () => {
   console.info(`App is running in localhost:${port}`);
 });
