@@ -21,4 +21,20 @@ const updateUserValidation = Joi.object({
     .options({ messages: { "any.only": "{{#label}} not match" } }),
 });
 
-export { loginValidation, updateUserValidation };
+const createUserValidation = Joi.object({
+  name: Joi.string().trim().min(3).max(100).required().label("Name"),
+  email: Joi.string()
+    .required()
+    .email({ tlds: { allow: false } })
+    .label("Email"),
+  password: Joi.string().min(6).required().max(100).label("Password"),
+  password_confirm: Joi.string()
+    .min(6)
+    .max(100)
+    .required()
+    .valid(Joi.ref("password"))
+    .label("Password Confirm")
+    .options({ messages: { "any.only": "{{#label}} not match" } }),
+});
+
+export { loginValidation, updateUserValidation, createUserValidation };

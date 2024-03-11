@@ -11,6 +11,9 @@ export const routerPublic = express.Router();
 
 // PUBLIC API - CAN BE ACCESSED WITHOUT LOGIN PROCESS
 
+// AUTH
+routerPublic.post("/first-user", authController.createFirstUser);
+
 // LOGIN ===================
 routerPublic.post("/login", authController.login);
 

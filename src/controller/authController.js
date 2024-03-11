@@ -2,6 +2,7 @@ import { Prisma } from "../app/prisma.js";
 import { Validate } from "../app/validate.js";
 import { ResponseError } from "../error/responseError.js";
 import {
+  createUserValidation,
   loginValidation,
   updateUserValidation,
 } from "../validation/authValidation.js";
@@ -126,4 +127,37 @@ const put = async (req, res, next) => {
   }
 };
 
-export default { login, logout, get, put };
+const createFirstUser = async (req, res, next) => {
+  try {
+    // check if user already exists
+    const checkUser = await Prisma.user.findFirst();
+    console.log("checkUser");
+    console.log(checkUser);
+    if (checkUser != null) {
+      res.status(403).json({ message: "User already exist" });
+    } else {
+      // validate
+      const acc = req.body;
+      const data = Validate(createUserValidation, acc);
+      // delete confirm password
+      delete data.password_confirm;
+      // encrypt password
+      data.password = await bcrypt.hash(data.password, 10);
+      // create a new user
+      const user = await Prisma.user.create({
+        data,
+        select: {
+          name: true,
+          email: true,
+        },
+      });
+
+      // create a new user
+      res.status(200).json(user);
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
+export default { createFirstUser, login, logout, get, put };
