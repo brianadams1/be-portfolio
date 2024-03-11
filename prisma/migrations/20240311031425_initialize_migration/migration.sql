@@ -15,11 +15,13 @@ CREATE TABLE `profile` (
     `email` VARCHAR(100) NOT NULL,
     `firstName` VARCHAR(100) NOT NULL,
     `lastName` VARCHAR(100) NOT NULL,
+    `avatar` VARCHAR(255) NULL,
     `dob` DATE NOT NULL,
     `address` TEXT NOT NULL,
     `city` VARCHAR(100) NOT NULL,
     `country` VARCHAR(100) NOT NULL,
     `job` VARCHAR(100) NOT NULL,
+    `phone` VARCHAR(100) NOT NULL,
     `bio` TEXT NULL,
     `website` VARCHAR(100) NULL,
     `github` VARCHAR(100) NULL,
@@ -43,6 +45,7 @@ CREATE TABLE `blog` (
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
+    INDEX `blog_title_idx`(`title`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -93,11 +96,57 @@ CREATE TABLE `skill` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `title` VARCHAR(100) NOT NULL,
     `skillCategoryId` INTEGER NOT NULL,
+    `svg` TEXT NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
+-- CreateTable
+CREATE TABLE `experience` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `company` VARCHAR(100) NOT NULL,
+    `location` VARCHAR(100) NOT NULL,
+    `title` VARCHAR(100) NOT NULL,
+    `description` TEXT NOT NULL,
+    `startDate` DATE NOT NULL,
+    `endDate` DATE NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `photo` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `path` VARCHAR(255) NOT NULL,
+    `blogId` INTEGER NULL,
+    `projectId` INTEGER NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `project_skill` (
+    `projectId` INTEGER NOT NULL,
+    `skillId` INTEGER NOT NULL,
+
+    PRIMARY KEY (`projectId`, `skillId`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
 -- AddForeignKey
 ALTER TABLE `skill` ADD CONSTRAINT `skill_skillCategoryId_fkey` FOREIGN KEY (`skillCategoryId`) REFERENCES `skill_category`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `photo` ADD CONSTRAINT `photo_blogId_fkey` FOREIGN KEY (`blogId`) REFERENCES `blog`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `photo` ADD CONSTRAINT `photo_projectId_fkey` FOREIGN KEY (`projectId`) REFERENCES `project`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `project_skill` ADD CONSTRAINT `project_skill_projectId_fkey` FOREIGN KEY (`projectId`) REFERENCES `project`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `project_skill` ADD CONSTRAINT `project_skill_skillId_fkey` FOREIGN KEY (`skillId`) REFERENCES `skill`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
