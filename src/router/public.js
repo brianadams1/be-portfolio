@@ -13,6 +13,7 @@ export const routerPublic = express.Router();
 
 // AUTH
 routerPublic.post("/first-user", authController.createFirstUser);
+routerPublic.get("/is-user-exist", authController.isUserExist);
 
 // LOGIN ===================
 routerPublic.post("/login", authController.login);
